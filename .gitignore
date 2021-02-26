@@ -1,0 +1,7 @@
+/logs/
+
+.metadata/
+secret/
+*.yml
+*.bin
+*.lock
