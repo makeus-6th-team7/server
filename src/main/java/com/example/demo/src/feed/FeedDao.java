@@ -17,6 +17,13 @@ public class FeedDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public int checkFeedId (int feedId){
+        String checkFeedIdQUery = "select exists(select id from feed where isDeleted = 'N' and id = ?);";
+        return this.jdbcTemplate.queryForObject(checkFeedIdQUery,
+                int.class,
+                feedId);
+    }
+
     public GetFeedRes getFeedDetail(int userIdx, int feedId){
         GetFeedRes getFeedRes = null;
 

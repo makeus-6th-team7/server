@@ -34,7 +34,8 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_EMAIL(false, 2016, "이메일 형식을 확인해주세요."),
     POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
 
-
+    // [GET] /feeds
+    INVALID_FEED_ID(false, 2020, "존재하지 않는 feedId입니다."),
 
     /**
      * 3000 : Response 오류
@@ -45,6 +46,7 @@ public enum BaseResponseStatus {
     // [POST] /users
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
+
 
 
 

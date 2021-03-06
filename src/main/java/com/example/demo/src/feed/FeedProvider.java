@@ -3,6 +3,7 @@ import com.example.demo.config.BaseException;
 import com.example.demo.src.feed.model.GetFeedRes;
 import com.example.demo.src.user.UserDao;
 import com.example.demo.utils.JwtService;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class FeedProvider {
     }
 
     public GetFeedRes getFeedDetail(int userIdx, int feedId) throws BaseException {
+        if(feedDao.checkFeedId(feedId)==0) throw new BaseException(INVALID_FEED_ID);
         try {
             GetFeedRes getFeedRes = feedDao.getFeedDetail(userIdx,feedId);
             return getFeedRes;
@@ -32,4 +34,5 @@ public class FeedProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
 }
