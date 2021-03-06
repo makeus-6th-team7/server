@@ -27,8 +27,10 @@ public class JwtService {
     public String createJwt(int userIdx){
         Date now = new Date();
         return Jwts.builder()
+                .setHeaderParam("type","jwt")
                 .claim("userIdx",userIdx)
                 .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
@@ -47,7 +49,7 @@ public class JwtService {
     @return int
     @throws BaseException
      */
-    public int getUserId() throws BaseException{
+    public int getUserIdx() throws BaseException{
         //1. JWT 추출
         String accessToken = getJwt();
         if(accessToken == null || accessToken.length() == 0){

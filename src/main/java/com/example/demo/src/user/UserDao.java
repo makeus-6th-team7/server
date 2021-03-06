@@ -19,54 +19,112 @@ public class UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public List<GetUserRes> getUsers(){
-        return this.jdbcTemplate.query("select * from users",
-                (rs, rowNum) -> new GetUserRes(
-                        rs.getInt("userIdx"),
-                        rs.getString("userName"),
-                        rs.getString("ID"),
-                        rs.getString("Email"),
-                        rs.getString("password")));
+    public int createUser(KakaoProfile kakaoProfile){
+        String createUserQuery = "insert into user (kakaoId, profileImgUrl,email) VALUES (?,?,?)";
+        Object[] createUserParams = new Object[]{kakaoProfile.getId(), kakaoProfile.properties.getProfile_image(), kakaoProfile.kakao_account.getEmail()};
+        this.jdbcTemplate.update(createUserQuery, createUserParams);
+
+        String lastInserIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
     }
-
-    public List<GetUserRes> getUsers(String email){
-        // query: 여러개 반환하는 경우
-        return this.jdbcTemplate.query("select * from users where email =?",
-                (rs, rowNum) -> new GetUserRes(
-                        rs.getInt("userIdx"),
-                        rs.getString("userName"),
-                        rs.getString("ID"),
-                        rs.getString("Email"),
-                        rs.getString("password")),
-                email); // 파라미터 여러개 넘겨줄 때는 배열형식!
-    }
-
-    public GetUserRes getUser(int userIdx){
-        // queryForObject: 하나만 반환하는 경우
-        return this.jdbcTemplate.queryForObject("select * from users where userIdx = ?",
-                (rs, rowNum) -> new GetUserRes(
-                        rs.getInt("userIdx"),
-                        rs.getString("userName"),
-                        rs.getString("ID"),
-                        rs.getString("Email"),
-                        rs.getString("password")),
-                userIdx);
-    }
-
-
-    public int createUser(PostUserReq postUserReq){
-        this.jdbcTemplate.update("insert into users (userName, ID, password, email) VALUES (?,?,?,?)",
-                new Object[]{postUserReq.getUserName(), postUserReq.getId(), postUserReq.getPassword(), postUserReq.getEmail(),}
-        );
-        return this.jdbcTemplate.queryForObject("select last_insert_id()",int.class);
-    }
-
-    public int checkEmail(String email){
-        return this.jdbcTemplate.queryForObject("select exists(select email from users where email = ?)",
+    public int checkKakaoId(Integer kakaoId){
+        String checkKakaoQuery = "select exists(select kakaoId from user where kakaoId = ? and isDeleted = 'N')";
+        Integer checkKakaoParams = kakaoId;
+        return this.jdbcTemplate.queryForObject(checkKakaoQuery,
                 int.class,
-                email);
+                checkKakaoParams);
 
     }
+    public int getUserIdxByKakaoId(Integer kakaoId){
+        String getUserIdxQuery = "select userIdx from user where kakaoId = ? and isDeleted = 'N'";
+        Integer getUserIdxParams = kakaoId;
+        return this.jdbcTemplate.queryForObject(getUserIdxQuery,
+                int.class,
+                getUserIdxParams);
+
+    }
+//    public List<GetUserRes> getUsers(){
+//        String getUsersQuery = "select * from users";
+//        return this.jdbcTemplate.query(getUsersQuery,
+//                (rs,rowNum) -> new GetUserRes(
+//                        rs.getInt("userIdx"),
+//                        rs.getString("userName"),
+//                        rs.getString("ID"),
+//                        rs.getString("Email"),
+//                        rs.getString("password"))
+//        );
+//    }
+//
+//    public List<GetUserRes> getUsersByEmail(String email){
+//        String getUsersByEmailQuery = "select * from users where email =?";
+//        String getUsersByEmailParams = email;
+//        // query: 여러개 반환하는 경우
+//        return this.jdbcTemplate.query(getUsersByEmailQuery,
+//                (rs, rowNum) -> new GetUserRes(
+//                        rs.getInt("userIdx"),
+//                        rs.getString("userName"),
+//                        rs.getString("ID"),
+//                        rs.getString("Email"),
+//                        rs.getString("password")),
+//                getUsersByEmailParams); // 파라미터 여러개 넘겨줄 때는 배열형식!
+//    }
+//
+//    public GetUserRes getUser(int userIdx){
+//        String getUserQuery = "select * from users where userIdx = ?";
+//        int getUserParams = userIdx;
+//        // queryForObject: 하나만 반환하는 경우
+//        return this.jdbcTemplate.queryForObject(getUserQuery,
+//                (rs, rowNum) -> new GetUserRes(
+//                        rs.getInt("userIdx"),
+//                        rs.getString("userName"),
+//                        rs.getString("ID"),
+//                        rs.getString("Email"),
+//                        rs.getString("password")),
+//                getUserParams);
+//    }
+//
+//
+//    public int createUser(PostUserReq postUserReq){
+//        String createUserQuery = "insert into users (userName, ID, password, email) VALUES (?,?,?,?)";
+//        Object[] createUserParams = new Object[]{postUserReq.getUserName(), postUserReq.getId(), postUserReq.getPassword(), postUserReq.getEmail()};
+//        this.jdbcTemplate.update(createUserQuery, createUserParams);
+//
+//        String lastInserIdQuery = "select last_insert_id()";
+//        return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+//    }
+//
+//    public int checkEmail(String email){
+//        String checkEmailQuery = "select exists(select email from users where email = ?)";
+//        String checkEmailParams = email;
+//        return this.jdbcTemplate.queryForObject(checkEmailQuery,
+//                int.class,
+//                checkEmailParams);
+//
+//    }
+//
+//    public int modifyUserName(PatchUserReq patchUserReq){
+//        String modifyUserNameQuery = "update users set userName = ? where userIdx = ? ";
+//        Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserName(), patchUserReq.getUserIdx()};
+//
+//        return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
+//    }
+
+//    public User getPwd(PostLoginReq postLoginReq){
+//        String getPwdQuery = "select userIdx, password,email,userName,ID from users where ID = ?";
+//        String getPwdParams = postLoginReq.getId();
+//
+//        return this.jdbcTemplate.queryForObject(getPwdQuery,
+//                (rs,rowNum)-> new User(
+//                        rs.getInt("userIdx"),
+//                        rs.getString("ID"),
+//                        rs.getString("userName"),
+//                        rs.getString("password"),
+//                        rs.getString("email")
+//                ),
+//                getPwdParams
+//        );
+//
+//    }
 
 
 
