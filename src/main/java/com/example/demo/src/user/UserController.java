@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("users")
 public class UserController {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -46,7 +46,6 @@ public class UserController {
     // Body
     @ResponseBody
     @PostMapping("/log-in/kakao")
-    //public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
     public BaseResponse<PostLoginRes> createUser(@RequestBody PostLoginReq postLoginReq) throws BaseException {
         KakaoProfile kakaoProfile = null;
         PostLoginRes postLoginRes = null;

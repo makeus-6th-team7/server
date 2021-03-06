@@ -41,7 +41,6 @@ public class UserProvider {
     public KakaoProfile getKakaoProfile(PostLoginReq postLoginReq) throws BaseException{
         try{
             RestTemplate rt = new RestTemplate();
-            System.out.println(postLoginReq.getAccessToken());
             //HttpHeader 오브젝트 생성
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization","Bearer "+postLoginReq.getAccessToken());
@@ -57,10 +56,8 @@ public class UserProvider {
                     kakaoProfileRequest,
                     String.class
             );
-            System.out.println(response.getBody());
             ObjectMapper objectMapper = new ObjectMapper();
             KakaoProfile kakaoProfile = objectMapper.readValue(response.getBody(),KakaoProfile.class);
-            System.out.println(kakaoProfile.getId());
             return kakaoProfile;
         }
         catch (Exception exception) {

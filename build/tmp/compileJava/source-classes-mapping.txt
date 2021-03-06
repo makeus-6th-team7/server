@@ -41,11 +41,23 @@ com/example/demo/src/user/model/KakaoProfile.java
  com.example.demo.src.user.model.KakaoProfile$KakaoAccount
  com.example.demo.src.user.model.KakaoProfile$KakaoAccount$Profile
  com.example.demo.src.user.model.KakaoProfile$Properties
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
+com/example/demo/src/feed/FeedService.java
+ com.example.demo.src.feed.FeedService
 com/example/demo/src/user/UserDao.java
  com.example.demo.src.user.UserDao
+com/example/demo/src/feed/model/PostFeedReq.java
+ com.example.demo.src.feed.model.PostFeedReq
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
+com/example/demo/src/feed/model/GetFeedRes.java
+ com.example.demo.src.feed.model.GetFeedRes
+com/example/demo/src/feed/FeedProvider.java
+ com.example.demo.src.feed.FeedProvider
+com/example/demo/src/feed/FeedDao.java
+ com.example.demo.src.feed.FeedDao
+com/example/demo/src/feed/FeedController.java
+ com.example.demo.src.feed.FeedController

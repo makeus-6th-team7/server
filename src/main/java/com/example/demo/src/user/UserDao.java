@@ -20,12 +20,12 @@ public class UserDao {
     }
 
     public int createUser(KakaoProfile kakaoProfile){
-        String createUserQuery = "insert into user (kakaoId, profileImgUrl,email) VALUES (?,?,?)";
-        Object[] createUserParams = new Object[]{kakaoProfile.getId(), kakaoProfile.properties.getProfile_image(), kakaoProfile.kakao_account.getEmail()};
+        String createUserQuery = "insert into user (kakaoId, userId, profileImgUrl,email) VALUES (?,?,?)";
+        Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.properties.getProfile_image(), kakaoProfile.kakao_account.getEmail()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
-        String lastInserIdQuery = "select last_insert_id()";
-        return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+        String lastInsertIdQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
     }
     public int checkKakaoId(Integer kakaoId){
         String checkKakaoQuery = "select exists(select kakaoId from user where kakaoId = ? and isDeleted = 'N')";
