@@ -143,6 +143,28 @@ public class FeedController {
         }
     }
     /**
+     *  댓글 좋아요 / 좋아요 취소 API
+     * [POST] feeds/comments/{commentId}/like
+     * @return BaseResponse
+     */
+    // Path-variable
+    @ResponseBody
+    @PostMapping("/comments/{commentId}/like") // (Post) 127.0.0.1:9000/feeds/comments/:commentId/like
+    public BaseResponse setCommentLike(@PathVariable("commentId") int commentId) {
+
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+
+            // set comment like
+            feedService.setCommentLike(userIdx,commentId);
+            return new BaseResponse<>();
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
      * 댓글 삭제 API
      * [DELETE] feeds/comments/{commentId}
      * @return BaseResponse

@@ -227,6 +227,27 @@ public class FeedDao {
             this.jdbcTemplate.update(insertFeedLikeQuery, feedId, userIdx);
         }
     }
+    public void setCommentLike(int userIdx, int commentId){
+
+        String checkCommentLikeRowQuery = "select exists( select commentId from commentLike where commentId = ? and userIdx = ?);";
+        boolean checkCommentLikeRow = this.jdbcTemplate.queryForObject(checkCommentLikeRowQuery,boolean.class,commentId,userIdx);
+
+        //commentLike table에 row가 존재한다면
+        if(checkCommentLikeRow) {
+            //해당 row 업데이트 (isLiked: N -> Y/ Y -> N)
+            String setCommentLikeQuery = "" +
+                    "update commentLike\n" +
+                    "set isLiked = case when isLiked = 'N' THEN 'Y' ELSE 'N' END\n" +
+                    "where commentId = ? and userIdx = ?;";
+            this.jdbcTemplate.update(setCommentLikeQuery, commentId, userIdx);
+        }
+        // 존재하지 않으면
+        else{
+            //새로운 row 추가
+            String insertCommentLikeQuery = "insert into commentLike (commentId, userIdx)values(?,?);";
+            this.jdbcTemplate.update(insertCommentLikeQuery, commentId, userIdx);
+        }
+    }
     public void setFeedReport(int userIdx, int feedId){
 
         String checkFeedReportRowQuery = "select exists( select feedId from report where feedId = ? and userIdx = ?);";
@@ -248,6 +269,7 @@ public class FeedDao {
             this.jdbcTemplate.update(insertFeedReportQuery, feedId, userIdx);
         }
     }
+
     public int postComments(int userIdx, int feedId, String content){
         String postCommentQury = "insert into comment (feedId, userIdx, content) values(?,?,?);";
         this.jdbcTemplate.update(postCommentQury,feedId, userIdx, content);

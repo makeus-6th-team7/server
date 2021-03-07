@@ -28,6 +28,14 @@ public class FeedService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    public void setCommentLike(int userIdx, int commentId) throws BaseException {
+        if(feedDao.checkCommentId(commentId)==0) throw new BaseException(INVALID_COMMENT_ID);
+        try {
+            feedDao.setCommentLike(userIdx,commentId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
     public void setFeedReport(int userIdx, int feedId) throws BaseException {
         if(feedDao.checkFeedId(feedId)==0) throw new BaseException(INVALID_FEED_ID);
