@@ -5,6 +5,7 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.feed.FeedProvider;
 import com.example.demo.src.feed.FeedService;
 import com.example.demo.src.feed.model.*;
+import com.example.demo.src.user.model.PostLoginReq;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,28 @@ public class FeedController {
             // Get comments
             GetCommentRes getCommentRes = feedProvider.getComments(userIdx,feedId);
             return new BaseResponse<>(getCommentRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
+     * 댓글 생성 API
+     * [POST] /feeds/{feedId}/comments
+     * @return BaseResponse<GetCommentRes>
+     */
+    // Path-variable
+    @ResponseBody
+    @PostMapping("/{feedId}/comments") // (POST) 127.0.0.1:9000/feeds/:feedId/comments
+    public BaseResponse<PostCommentRes> PostComments(@PathVariable("feedId") int feedId, @RequestBody PostCommentReq postCommentReq) {
+
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+
+            // Post comments
+            PostCommentRes postCommentRes = feedService.postComments(userIdx,feedId,postCommentReq.getContent());
+            return new BaseResponse<>(postCommentRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }

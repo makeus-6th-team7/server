@@ -229,4 +229,13 @@ public class FeedDao {
             this.jdbcTemplate.update(insertFeedReportQuery, feedId, userIdx);
         }
     }
+    public int postComments(int userIdx, int feedId, String content){
+        String postCommentQury = "insert into comment (feedId, userIdx, content) values(?,?,?);";
+        this.jdbcTemplate.update(postCommentQury,feedId, userIdx, content);
+
+        String lastInsertCommentQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertCommentQuery,int.class);
+
+    }
+
 }
