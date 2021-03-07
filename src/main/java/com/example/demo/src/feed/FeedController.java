@@ -60,7 +60,7 @@ public class FeedController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/{feedId}/like") // (GET) 127.0.0.1:9000/feeds/:feedId/like
+    @PostMapping("/{feedId}/like") // (Post) 127.0.0.1:9000/feeds/:feedId/like
     public BaseResponse setFeedLike(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
@@ -82,7 +82,7 @@ public class FeedController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/{feedId}/report") // (GET) 127.0.0.1:9000/feeds/:feedId/report
+    @PostMapping("/{feedId}/report") // (POST) 127.0.0.1:9000/feeds/:feedId/report
     public BaseResponse setFeedReport(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
