@@ -76,6 +76,28 @@ public class FeedController {
         }
     }
     /**
+     *  게시물 신고/ 신고 취소 API
+     * [POST] /feeds/{feedId}/report
+     * @return BaseResponse<GetCommentRes>
+     */
+    // Path-variable
+//    @ResponseBody
+//    @GetMapping("/{feedId}/like") // (GET) 127.0.0.1:9000/feeds/:feedId/like
+//    public BaseResponse setFeedLike(@PathVariable("feedId") int feedId) {
+//
+//        int userIdx = 0;
+//        try {
+//            //jwt에서 idx 추출.
+//            userIdx = jwtService.getUserIdx();
+//
+//            // set feed like
+//            feedService.setFeedLike(userIdx,feedId);
+//            return new BaseResponse<>();
+//        } catch(BaseException exception){
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
+    /**
      * 댓글 조회 API
      * [GET] /feeds/{feedId}/comments
      * @return BaseResponse<GetCommentRes>

@@ -172,7 +172,7 @@ public class FeedDao {
                     "on user.userIdx = commentLike.userIdx\n" +
                     "where commentLike.isLiked = 'Y' and commentLike.commentId = ? and user.userIdx=?) as isLiked;";
             Object[] getCommentIsLikedParams = new Object[]{commentId, userIdx};
-            commentResClass.setIsLiked(this.jdbcTemplate.queryForObject(getCommentisLikedQuery, boolean.class, getCommentIsLikedParams));
+            commentResClass.setCheckLike(this.jdbcTemplate.queryForObject(getCommentisLikedQuery, boolean.class, getCommentIsLikedParams));
         }
 
         return getCommentRes;

@@ -16,7 +16,7 @@ public class GetCommentRes {
     private String createdAt;
 
     private int likeNum = 0;
-    private boolean isLiked = false;
+    private boolean checkLike = false;
 
     public GetCommentRes(int commentId, int userIdx, String userId, String profileImgUrl, String content, String createdAt) {
         this.commentId = commentId;
@@ -27,8 +27,5 @@ public class GetCommentRes {
         this.createdAt = createdAt;
     }
 
-    public void setIsLiked(Boolean isLiked) {
-        this.isLiked = isLiked;
-    }
 }
 

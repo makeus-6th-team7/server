@@ -1,5 +1,7 @@
 package com.example.demo.src.feed.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,19 +24,19 @@ public class GetFeedRes {
     private int price;
     private String period;
     private int likeNum;
-    private boolean isLIked;
+    private boolean checkLike;
     private String createdAt;
     private int viewNum;
     private int savedNum;
     private int commentNum;
-    private boolean isReported;
+    private boolean checkReport;
     private int feedImgNum;
 
     private List<String> pros = null;
     private List<String> cons = null;
     private List<String> feedImgUrls = null;
 
-    public GetFeedRes(int userIdx, String userId, String profileImgUrl, int temperature, int retouchedDegree, String review, String title, String longitude, String latitude, int price, String period, int likeNum, boolean isLIked, String createdAt, int viewNum, int savedNum, int commentNum, boolean isReported, int feedImgNum) {
+    public GetFeedRes(int userIdx, String userId, String profileImgUrl, int temperature, int retouchedDegree, String review, String title, String longitude, String latitude, int price, String period, int likeNum, boolean checkLike, String createdAt, int viewNum, int savedNum, int commentNum, boolean checkReport, int feedImgNum) {
         this.userIdx = userIdx;
         this.userId = userId;
         this.profileImgUrl = profileImgUrl;
@@ -47,12 +49,12 @@ public class GetFeedRes {
         this.price = price;
         this.period = period;
         this.likeNum = likeNum;
-        this.isLIked = isLIked;
+        this.checkLike = checkLike;
         this.createdAt = createdAt;
         this.viewNum = viewNum;
         this.savedNum = savedNum;
         this.commentNum = commentNum;
-        this.isReported = isReported;
+        this.checkReport = checkReport;
         this.feedImgNum = feedImgNum;
     }
 
