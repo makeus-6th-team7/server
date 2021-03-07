@@ -21,14 +21,13 @@ public class FeedController {
     @Autowired
     private final FeedProvider feedProvider;
     //@Autowired
-    //private final FeedService feedService;
+    private final FeedService feedService;
     @Autowired
     private final JwtService jwtService;
 
-    //public FeedController(FeedProvider feedProvider, FeedService feedService, JwtService jwtService) {
-    public FeedController(FeedProvider feedProvider, JwtService jwtService) {
+    public FeedController(FeedProvider feedProvider, FeedService feedService, JwtService jwtService) {
         this.feedProvider = feedProvider;
-        //this.feedService = feedService;
+        this.feedService = feedService;
         this.jwtService = jwtService;
     }
 
@@ -54,7 +53,28 @@ public class FeedController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+    /**
+     *  게시물 좋아요 / 좋아요 취소 API
+     * [POST] /feeds/{feedId}/like
+     * @return BaseResponse<GetCommentRes>
+     */
+    // Path-variable
+    @ResponseBody
+    @GetMapping("/{feedId}/like") // (GET) 127.0.0.1:9000/feeds/:feedId/like
+    public BaseResponse setFeedLike(@PathVariable("feedId") int feedId) {
 
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+
+            // set feed like
+            feedService.setFeedLike(userIdx,feedId);
+            return new BaseResponse<>();
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
     /**
      * 댓글 조회 API
      * [GET] /feeds/{feedId}/comments
@@ -77,4 +97,5 @@ public class FeedController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
 }

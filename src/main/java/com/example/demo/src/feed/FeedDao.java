@@ -177,4 +177,11 @@ public class FeedDao {
 
         return getCommentRes;
     }
+    public void setFeedLike(int userIdx, int feedId){
+        String setFeedLikeQuery = "" +
+                "update feedLike\n" +
+                "set isLiked = case when isLiked = 'N' THEN 'Y' ELSE 'N' END\n" +
+                "where feedId = ? and userIdx = ?;";
+        this.jdbcTemplate.update(setFeedLikeQuery,feedId,userIdx );
+    }
 }

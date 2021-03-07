@@ -31,7 +31,8 @@ public class UserService {
         this.jwtService = jwtService;
 
     }
-        //POST
+
+    //POST
     public PostLoginRes createUserByKakao(KakaoProfile kakaoProfile) throws BaseException {
 
         try{
