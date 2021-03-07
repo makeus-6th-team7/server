@@ -22,11 +22,30 @@ public class FeedDao {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public int getUserIdxOfFeed (int feedId){
+        String getUserIdxOfFeedQuery = "select userIdx from feed where isDeleted = 'N' and id = ?;";
+        return this.jdbcTemplate.queryForObject(getUserIdxOfFeedQuery,
+                int.class,
+                feedId);
+    }
+    public int getUserIdxOfComment (int commentId){
+        String getUserIdxOfCommentQuery = "select userIdx from comment where isDeleted = 'N' and id = ?;";
+        return this.jdbcTemplate.queryForObject(getUserIdxOfCommentQuery,
+                int.class,
+                commentId);
+    }
+
     public int checkFeedId (int feedId){
         String checkFeedIdQUery = "select exists(select id from feed where isDeleted = 'N' and id = ?);";
         return this.jdbcTemplate.queryForObject(checkFeedIdQUery,
                 int.class,
                 feedId);
+    }
+    public int checkCommentId (int commentId){
+        String checkFeedIdQUery = "select exists(select id from comment where isDeleted = 'N' and id = ?);";
+        return this.jdbcTemplate.queryForObject(checkFeedIdQUery,
+                int.class,
+                commentId);
     }
 
     public GetFeedRes getFeedDetail(int userIdx, int feedId){
@@ -236,6 +255,10 @@ public class FeedDao {
         String lastInsertCommentQuery = "select last_insert_id()";
         return this.jdbcTemplate.queryForObject(lastInsertCommentQuery,int.class);
 
+    }
+    public void deleteComments(int commentId){
+        String postCommentQury = "update comment set isDeleted = 'Y' where id =? ;";
+        this.jdbcTemplate.update(postCommentQury,commentId);
     }
 
 }

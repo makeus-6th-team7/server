@@ -34,8 +34,11 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_EMAIL(false, 2016, "이메일 형식을 확인해주세요."),
     POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
 
-    // [GET] /feeds
+    // /feeds
     INVALID_FEED_ID(false, 2020, "존재하지 않는 feedId입니다."),
+    INVALID_COMMENT_ID(false, 2021, "존재하지 않는 commentId입니다."),
+    INVALID_USER_REQ(false, 2022, "권한이 없는 유저의 요청입니다."),
+
 
     /**
      * 3000 : Response 오류

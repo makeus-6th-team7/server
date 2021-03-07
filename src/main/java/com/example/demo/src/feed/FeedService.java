@@ -8,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
-import static com.example.demo.config.BaseResponseStatus.INVALID_FEED_ID;
-
+import static com.example.demo.config.BaseResponseStatus.*;
 @Service
 public class FeedService {
     private final FeedDao feedDao;
@@ -44,6 +42,16 @@ public class FeedService {
         try {
             int commentId = feedDao.postComments(userIdx,feedId,content);
             return new PostCommentRes(commentId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public void deleteCommentRes (int userIdx, int commentId) throws BaseException {
+        if(feedDao.checkCommentId(commentId)==0) throw new BaseException(INVALID_COMMENT_ID);
+        // 다른 사람의 댓글을 삭제하려고 할 때
+        if(userIdx != feedDao.getUserIdxOfComment(commentId)) throw new BaseException(INVALID_USER_REQ);
+        try {
+            feedDao.deleteComments(commentId);
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

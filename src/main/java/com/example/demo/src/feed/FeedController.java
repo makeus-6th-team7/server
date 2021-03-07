@@ -57,7 +57,7 @@ public class FeedController {
     /**
      *  게시물 좋아요 / 좋아요 취소 API
      * [POST] /feeds/{feedId}/like
-     * @return BaseResponse<GetCommentRes>
+     * @return BaseResponse
      */
     // Path-variable
     @ResponseBody
@@ -79,7 +79,7 @@ public class FeedController {
     /**
      *  게시물 신고 / 신고 취소 API
      * [POST] /feeds/{feedId}/report
-     * @return BaseResponse<GetCommentRes>
+     * @return BaseResponse
      */
     // Path-variable
     @ResponseBody
@@ -123,12 +123,12 @@ public class FeedController {
     /**
      * 댓글 생성 API
      * [POST] /feeds/{feedId}/comments
-     * @return BaseResponse<GetCommentRes>
+     * @return BaseResponse<PostCommentRes>
      */
     // Path-variable
     @ResponseBody
     @PostMapping("/{feedId}/comments") // (POST) 127.0.0.1:9000/feeds/:feedId/comments
-    public BaseResponse<PostCommentRes> PostComments(@PathVariable("feedId") int feedId, @RequestBody PostCommentReq postCommentReq) {
+    public BaseResponse<PostCommentRes> postComments(@PathVariable("feedId") int feedId, @RequestBody PostCommentReq postCommentReq) {
 
         int userIdx = 0;
         try {
@@ -138,6 +138,28 @@ public class FeedController {
             // Post comments
             PostCommentRes postCommentRes = feedService.postComments(userIdx,feedId,postCommentReq.getContent());
             return new BaseResponse<>(postCommentRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
+     * 댓글 삭제 API
+     * [DELETE] feeds/comments/{commentId}
+     * @return BaseResponse
+     */
+    // Path-variable
+    @ResponseBody
+    @DeleteMapping("/comments/{commentId}") // (POST) 127.0.0.1:9000/feeds/comments/:commentId
+    public BaseResponse deleteComments(@PathVariable("commentId") int commentId) {
+
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+
+            // delete comments
+            feedService.deleteCommentRes(userIdx,commentId);
+            return new BaseResponse<>();
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
