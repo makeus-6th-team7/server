@@ -3,9 +3,10 @@ package com.example.demo.src.feed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import com.example.demo.src.feed.model.GetFeedRes;
+import com.example.demo.src.feed.model.*;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository
 public class FeedDao {
@@ -128,5 +129,52 @@ public class FeedDao {
 
         return getFeedRes;
     }
+    public List<GetCommentRes> getComments(int userIdx, int feedId){
+        String getCommentsQuery = "" +
+                "select comment.id as commentId, user.userIdx, userId, profileImgUrl, content,\n" +
+                "       CASE\n" +
+                "                WHEN TIMESTAMPDIFF(minute,comment.createdAt,now()) < 60\n" +
+                "                THEN CONCAT(TIMESTAMPDIFF(minute,comment.createdAt,now()),'분 전')\n" +
+                "                WHEN TIMESTAMPDIFF(hour,comment.createdAt,now()) < 24\n" +
+                "                THEN CONCAT(TIMESTAMPDIFF(hour,comment.createdAt,now()),'시간 전')\n" +
+                "                WHEN TIMESTAMPDIFF(day,comment.createdAt,now()) < 31\n" +
+                "                THEN CONCAT(TIMESTAMPDIFF(day,comment.createdAt,now()),'일 전')\n" +
+                "                WHEN TIMESTAMPDIFF(month,comment.createdAt,now()) < 12\n" +
+                "                THEN CONCAT(TIMESTAMPDIFF(month,comment.createdAt,now()),'달 전')\n" +
+                "                ELSE CONCAT(TIMESTAMPDIFF(year,comment.createdAt,now()),'년 전')\n" +
+                "            END AS createdAt\n" +
+                "from comment join user\n" +
+                "on comment.userIdx = user.userIdx\n" +
+                "where comment.isDeleted = 'N' and comment.feedId = ?;";
+        List<GetCommentRes> getCommentRes = this.jdbcTemplate.query(getCommentsQuery,
+                (rs, rowNum) -> new GetCommentRes(
+                        rs.getInt("commentId"),
+                        rs.getInt("userIdx"),
+                        rs.getString("userId"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("content"),
+                        rs.getString("createdAt")), feedId);
 
+
+        for(GetCommentRes commentResClass : getCommentRes){
+            // likeNim 설정
+            String getCommentLikeNumQeury ="" +
+                    "select count(commentId) as likeNum\n" +
+                    "from commentLike\n" +
+                    "where isLiked = 'Y' and commentId = ?;";
+            int commentId = commentResClass.getCommentId();
+            commentResClass.setLikeNum(this.jdbcTemplate.queryForObject(getCommentLikeNumQeury, int.class, commentId));
+            //isLiked 설정
+            String getCommentisLikedQuery = "" +
+                    "select exists(\n" +
+                    "    select user.userIdx\n" +
+                    "from user join commentLike\n" +
+                    "on user.userIdx = commentLike.userIdx\n" +
+                    "where commentLike.isLiked = 'Y' and commentLike.commentId = ? and user.userIdx=?) as isLiked;";
+            Object[] getCommentIsLikedParams = new Object[]{commentId, userIdx};
+            commentResClass.setIsLiked(this.jdbcTemplate.queryForObject(getCommentisLikedQuery, boolean.class, getCommentIsLikedParams));
+        }
+
+        return getCommentRes;
+    }
 }
