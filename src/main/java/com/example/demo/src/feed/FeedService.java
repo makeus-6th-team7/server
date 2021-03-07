@@ -30,4 +30,14 @@ public class FeedService {
         }
 
     }
+
+    public void setFeedReport(int userIdx, int feedId) throws BaseException {
+        if(feedDao.checkFeedId(feedId)==0) throw new BaseException(INVALID_FEED_ID);
+        try {
+            feedDao.setFeedReport(userIdx,feedId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
 }

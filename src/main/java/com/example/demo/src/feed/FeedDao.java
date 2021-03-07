@@ -1,5 +1,7 @@
 package com.example.demo.src.feed;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -17,6 +19,8 @@ public class FeedDao {
     public void setDataSource(DataSource dataSource){
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
+
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public int checkFeedId (int feedId){
         String checkFeedIdQUery = "select exists(select id from feed where isDeleted = 'N' and id = ?);";
@@ -78,7 +82,7 @@ public class FeedDao {
                 "    (select exists(select report.userIdx\n" +
                 "    from report join user\n" +
                 "    on report.userIdx = user.userIdx\n" +
-                "    where report.reported = 'Y' and user.userIdx = ?) as isReported) as isReported #접속중인 사용자 idx\n" +
+                "    where report.isReported = 'Y' and user.userIdx = ?) as isReported) as isReported #접속중인 사용자 idx\n" +
                 "join\n" +
                 "    (select count(feed.id) as feedImgNum\n" +
                 "    from feed join feedImg\n" +
@@ -178,10 +182,45 @@ public class FeedDao {
         return getCommentRes;
     }
     public void setFeedLike(int userIdx, int feedId){
-        String setFeedLikeQuery = "" +
-                "update feedLike\n" +
-                "set isLiked = case when isLiked = 'N' THEN 'Y' ELSE 'N' END\n" +
-                "where feedId = ? and userIdx = ?;";
-        this.jdbcTemplate.update(setFeedLikeQuery,feedId,userIdx );
+
+        String checkFeedLikeRowQuery = "select exists( select feedId from feedLike where feedId = ? and userIdx = ?);";
+        boolean checkFeedLikeRow = this.jdbcTemplate.queryForObject(checkFeedLikeRowQuery,boolean.class,feedId,userIdx);
+
+        //FeedLike table에 row가 존재한다면
+        if(checkFeedLikeRow) {
+            //해당 row 업데이트 (isLiked: N -> Y/ Y -> N)
+            String setFeedLikeQuery = "" +
+                    "update feedLike\n" +
+                    "set isLiked = case when isLiked = 'N' THEN 'Y' ELSE 'N' END\n" +
+                    "where feedId = ? and userIdx = ?;";
+            this.jdbcTemplate.update(setFeedLikeQuery, feedId, userIdx);
+        }
+        // 존재하지 않으면
+        else{
+            //새로운 row 추가
+            String insertFeedLikeQuery = "insert into feedLike (feedId, userIdx)values(?,?);";
+            this.jdbcTemplate.update(insertFeedLikeQuery, feedId, userIdx);
+        }
+    }
+    public void setFeedReport(int userIdx, int feedId){
+
+        String checkFeedReportRowQuery = "select exists( select feedId from report where feedId = ? and userIdx = ?);";
+        boolean checkFeedReportRow = this.jdbcTemplate.queryForObject(checkFeedReportRowQuery,boolean.class,feedId,userIdx);
+
+        //FeedReport table에 row가 존재한다면
+        if(checkFeedReportRow) {
+            //해당 row 업데이트 (isReported: N -> Y/ Y -> N)
+            String setFeedReportQuery = "" +
+                    "update report\n" +
+                    "set isReported = case when isReported = 'N' THEN 'Y' ELSE 'N' END\n" +
+                    "where feedId = ? and userIdx = ?;";
+            this.jdbcTemplate.update(setFeedReportQuery, feedId, userIdx);
+        }
+        // 존재하지 않으면
+        else{
+            //새로운 row 추가
+            String insertFeedReportQuery = "insert into report (feedId, userIdx) values(?,?);";
+            this.jdbcTemplate.update(insertFeedReportQuery, feedId, userIdx);
+        }
     }
 }
