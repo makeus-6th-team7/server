@@ -105,7 +105,7 @@ public class FeedController {
     // Path-variable
     @ResponseBody
     @GetMapping("/{feedId}/comments") // (GET) 127.0.0.1:9000/feeds/:feedId/comments
-    public BaseResponse<List<GetCommentRes>> getComments(@PathVariable("feedId") int feedId) {
+    public BaseResponse<GetCommentRes> getComments(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
         try {
@@ -113,7 +113,7 @@ public class FeedController {
             userIdx = jwtService.getUserIdx();
 
             // Get comments
-            List<GetCommentRes> getCommentRes = feedProvider.getComments(userIdx,feedId);
+            GetCommentRes getCommentRes = feedProvider.getComments(userIdx,feedId);
             return new BaseResponse<>(getCommentRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

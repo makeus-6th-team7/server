@@ -133,7 +133,7 @@ public class FeedDao {
 
         return getFeedRes;
     }
-    public List<GetCommentRes> getComments(int userIdx, int feedId){
+    public GetCommentRes getComments(int userIdx, int feedId){
         String getCommentsQuery = "" +
                 "select comment.id as commentId, user.userIdx, userId, profileImgUrl, content,\n" +
                 "       CASE\n" +
@@ -150,24 +150,26 @@ public class FeedDao {
                 "from comment join user\n" +
                 "on comment.userIdx = user.userIdx\n" +
                 "where comment.isDeleted = 'N' and comment.feedId = ?;";
-        List<GetCommentRes> getCommentRes = this.jdbcTemplate.query(getCommentsQuery,
-                (rs, rowNum) -> new GetCommentRes(
+        GetCommentRes getCommentRes;
+        GetCommentRes tmp = new GetCommentRes();
+        getCommentRes= new GetCommentRes(this.jdbcTemplate.query(getCommentsQuery,
+                (rs, rowNum) -> tmp.new Comment(
                         rs.getInt("commentId"),
                         rs.getInt("userIdx"),
                         rs.getString("userId"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
-                        rs.getString("createdAt")), feedId);
+                        rs.getString("createdAt")), feedId));
 
 
-        for(GetCommentRes commentResClass : getCommentRes){
-            // likeNim 설정
+        for(GetCommentRes.Comment comment : getCommentRes.getComments()){
+            // likeNum 설정
             String getCommentLikeNumQeury ="" +
                     "select count(commentId) as likeNum\n" +
                     "from commentLike\n" +
                     "where isLiked = 'Y' and commentId = ?;";
-            int commentId = commentResClass.getCommentId();
-            commentResClass.setLikeNum(this.jdbcTemplate.queryForObject(getCommentLikeNumQeury, int.class, commentId));
+            int commentId = comment.getCommentId();
+            comment.setLikeNum(this.jdbcTemplate.queryForObject(getCommentLikeNumQeury, int.class, commentId));
             //isLiked 설정
             String getCommentisLikedQuery = "" +
                     "select exists(\n" +
@@ -176,8 +178,12 @@ public class FeedDao {
                     "on user.userIdx = commentLike.userIdx\n" +
                     "where commentLike.isLiked = 'Y' and commentLike.commentId = ? and user.userIdx=?) as isLiked;";
             Object[] getCommentIsLikedParams = new Object[]{commentId, userIdx};
-            commentResClass.setCheckLike(this.jdbcTemplate.queryForObject(getCommentisLikedQuery, boolean.class, getCommentIsLikedParams));
+            comment.setCheckLike(this.jdbcTemplate.queryForObject(getCommentisLikedQuery, boolean.class, getCommentIsLikedParams));
         }
+        // profileImgUrl 설정
+        String getProfileImgUrlQuery = "select profileImgUrl from user where userIdx =?;";
+        getCommentRes.setProfileImgUrl(this.jdbcTemplate.queryForObject(getProfileImgUrlQuery, String.class,  userIdx));
+
 
         return getCommentRes;
     }

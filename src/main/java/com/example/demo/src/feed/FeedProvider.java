@@ -39,10 +39,10 @@ public class FeedProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    public List<GetCommentRes> getComments(int userIdx, int feedId) throws BaseException {
+    public GetCommentRes getComments(int userIdx, int feedId) throws BaseException {
         if(feedDao.checkFeedId(feedId)==0) throw new BaseException(INVALID_FEED_ID);
         try {
-            List<GetCommentRes> getCommentRes = feedDao.getComments(userIdx,feedId);
+            GetCommentRes getCommentRes = feedDao.getComments(userIdx,feedId);
             return getCommentRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
