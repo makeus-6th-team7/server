@@ -1,9 +1,7 @@
 package com.example.demo.src.user;
 
 import com.example.demo.config.*;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.src.user.model.*;
@@ -50,6 +48,10 @@ public class UserController {
     @ResponseBody
     @PostMapping("/log-in/kakao")
     @ApiOperation(value = "카카오 로그인 API")
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2004, message = "유효하지 않은 access_token 입니다.",response = BaseResponse.class),
+    })
     public BaseResponse<PostLoginRes> createUser(@RequestBody PostLoginReq postLoginReq) throws BaseException {
         KakaoProfile kakaoProfile = null;
         PostLoginRes postLoginRes = null;
@@ -191,7 +193,7 @@ public class UserController {
 //            int userIdxByJwt = jwtService.getUserIdx();
 //            //userIdx와 접근한 유저가 같은지 확인
 //            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
+//                return new BaseResponse<>(paramType = "path");
 //            }
 //            //같다면 유저네임 변경
 //            PatchUserReq patchUserReq = new PatchUserReq(userIdx,user.getUserName());

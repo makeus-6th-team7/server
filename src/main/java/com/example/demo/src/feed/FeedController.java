@@ -7,9 +7,7 @@ import com.example.demo.src.feed.FeedService;
 import com.example.demo.src.feed.model.*;
 import com.example.demo.src.user.model.PostLoginReq;
 import com.example.demo.utils.JwtService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +45,12 @@ public class FeedController {
     })
     @ResponseBody
     @GetMapping("/{feedId}") // (GET) 127.0.0.1:9000/feeds/:feedId
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
+    })
     public BaseResponse<GetFeedRes> getFeedDetail(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
@@ -73,6 +77,12 @@ public class FeedController {
     })
     @ResponseBody
     @PostMapping("/{feedId}/like") // (Post) 127.0.0.1:9000/feeds/:feedId/like
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
+    })
     public BaseResponse setFeedLike(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
@@ -99,6 +109,12 @@ public class FeedController {
     })
     @ResponseBody
     @PostMapping("/{feedId}/report") // (POST) 127.0.0.1:9000/feeds/:feedId/report
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
+    })
     public BaseResponse setFeedReport(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
@@ -125,6 +141,12 @@ public class FeedController {
     })
     @ResponseBody
     @GetMapping("/{feedId}/comments") // (GET) 127.0.0.1:9000/feeds/:feedId/comments
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
+    })
     public BaseResponse<GetCommentRes> getComments(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
@@ -151,6 +173,12 @@ public class FeedController {
     })
     @ResponseBody
     @PostMapping("/{feedId}/comments") // (POST) 127.0.0.1:9000/feeds/:feedId/comments
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
+    })
     public BaseResponse<PostCommentRes> postComments(@PathVariable("feedId") int feedId, @RequestBody PostCommentReq postCommentReq) {
 
         int userIdx = 0;
@@ -177,6 +205,12 @@ public class FeedController {
     })
     @ResponseBody
     @PostMapping("/comments/{commentId}/like") // (Post) 127.0.0.1:9000/feeds/comments/:commentId/like
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2021, message = "존재하지 않는 commentId입니다.",response = BaseResponse.class)
+    })
     public BaseResponse setCommentLike(@PathVariable("commentId") int commentId) {
 
         int userIdx = 0;
@@ -203,6 +237,12 @@ public class FeedController {
     })
     @ResponseBody
     @DeleteMapping("/comments/{commentId}") // (POST) 127.0.0.1:9000/feeds/comments/:commentId
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2021, message = "존재하지 않는 commentId입니다.",response = BaseResponse.class)
+    })
     public BaseResponse deleteComments(@PathVariable("commentId") int commentId) {
 
         int userIdx = 0;
