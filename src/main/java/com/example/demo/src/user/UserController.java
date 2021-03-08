@@ -1,6 +1,9 @@
 package com.example.demo.src.user;
 
 import com.example.demo.config.*;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.src.user.model.*;
@@ -46,6 +49,7 @@ public class UserController {
     // Body
     @ResponseBody
     @PostMapping("/log-in/kakao")
+    @ApiOperation(value = "카카오 로그인 API")
     public BaseResponse<PostLoginRes> createUser(@RequestBody PostLoginReq postLoginReq) throws BaseException {
         KakaoProfile kakaoProfile = null;
         PostLoginRes postLoginRes = null;

@@ -2,6 +2,9 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.src.user.model.*;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -18,6 +21,7 @@ public class UserDao {
     public void setDataSource(DataSource dataSource){
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
+
 
     public int createUser(KakaoProfile kakaoProfile){
         String createUserQuery = "insert into user (kakaoId, userId, profileImgUrl,email) VALUES (?,?,?)";

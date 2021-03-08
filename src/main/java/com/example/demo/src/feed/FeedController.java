@@ -7,6 +7,9 @@ import com.example.demo.src.feed.FeedService;
 import com.example.demo.src.feed.model.*;
 import com.example.demo.src.user.model.PostLoginReq;
 import com.example.demo.utils.JwtService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,10 @@ public class FeedController {
      * @return BaseResponse<GetFeedRes>
      */
     // Path-variable
+    @ApiOperation(value = "게시물 상세조회 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
+    })
     @ResponseBody
     @GetMapping("/{feedId}") // (GET) 127.0.0.1:9000/feeds/:feedId
     public BaseResponse<GetFeedRes> getFeedDetail(@PathVariable("feedId") int feedId) {
@@ -60,6 +67,10 @@ public class FeedController {
      * @return BaseResponse
      */
     // Path-variable
+    @ApiOperation(value = "게시물 좋아요 / 좋아요 취소 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
+    })
     @ResponseBody
     @PostMapping("/{feedId}/like") // (Post) 127.0.0.1:9000/feeds/:feedId/like
     public BaseResponse setFeedLike(@PathVariable("feedId") int feedId) {
@@ -82,6 +93,10 @@ public class FeedController {
      * @return BaseResponse
      */
     // Path-variable
+    @ApiOperation(value = "게시물 신고 / 신고 취소 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
+    })
     @ResponseBody
     @PostMapping("/{feedId}/report") // (POST) 127.0.0.1:9000/feeds/:feedId/report
     public BaseResponse setFeedReport(@PathVariable("feedId") int feedId) {
@@ -104,6 +119,10 @@ public class FeedController {
      * @return BaseResponse<GetCommentRes>
      */
     // Path-variable
+    @ApiOperation(value = "댓글 조회 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
+    })
     @ResponseBody
     @GetMapping("/{feedId}/comments") // (GET) 127.0.0.1:9000/feeds/:feedId/comments
     public BaseResponse<GetCommentRes> getComments(@PathVariable("feedId") int feedId) {
@@ -126,6 +145,10 @@ public class FeedController {
      * @return BaseResponse<PostCommentRes>
      */
     // Path-variable
+    @ApiOperation(value = "댓글 생성 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
+    })
     @ResponseBody
     @PostMapping("/{feedId}/comments") // (POST) 127.0.0.1:9000/feeds/:feedId/comments
     public BaseResponse<PostCommentRes> postComments(@PathVariable("feedId") int feedId, @RequestBody PostCommentReq postCommentReq) {
@@ -148,6 +171,10 @@ public class FeedController {
      * @return BaseResponse
      */
     // Path-variable
+    @ApiOperation(value = "댓글 좋아요 / 좋아요 취소 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commentId", value = "댓글 식별자", required = true, dataType = "int", paramType = "path"),
+    })
     @ResponseBody
     @PostMapping("/comments/{commentId}/like") // (Post) 127.0.0.1:9000/feeds/comments/:commentId/like
     public BaseResponse setCommentLike(@PathVariable("commentId") int commentId) {
@@ -170,6 +197,10 @@ public class FeedController {
      * @return BaseResponse
      */
     // Path-variable
+    @ApiOperation(value = "댓글 삭제 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commentId", value = "댓글 식별자", required = true, dataType = "int", paramType = "path"),
+    })
     @ResponseBody
     @DeleteMapping("/comments/{commentId}") // (POST) 127.0.0.1:9000/feeds/comments/:commentId
     public BaseResponse deleteComments(@PathVariable("commentId") int commentId) {
