@@ -3,9 +3,7 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.secret.Secret;
 import com.example.demo.src.user.model.*;
-import com.example.demo.utils.AES128;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +31,7 @@ public class UserService {
     }
 
     //POST
-    public PostLoginRes createUserByKakao(KakaoProfile kakaoProfile) throws BaseException {
+    public PostLoginRes createUserByKakao(KakaoProfileRes kakaoProfile) throws BaseException {
 
         try{
            int userIdx = userDao.createUser(kakaoProfile);

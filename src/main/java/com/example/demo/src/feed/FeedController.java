@@ -2,18 +2,13 @@ package com.example.demo.src.feed;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.feed.FeedProvider;
-import com.example.demo.src.feed.FeedService;
 import com.example.demo.src.feed.model.*;
-import com.example.demo.src.user.model.PostLoginReq;
 import com.example.demo.utils.JwtService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("feeds")
@@ -44,13 +39,14 @@ public class FeedController {
             @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @GetMapping("/{feedId}") // (GET) 127.0.0.1:9000/feeds/:feedId
+    @GetMapping("/{feedId}") // (GET) http://52.79.187.77/feeds/:feedId
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
             @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
             @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
     })
+//    public BaseResponse<GetFeedRes> getFeedDetail(@PathVariable("feedId") int feedId) {
     public BaseResponse<GetFeedRes> getFeedDetail(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
@@ -76,7 +72,7 @@ public class FeedController {
             @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @PostMapping("/{feedId}/like") // (Post) 127.0.0.1:9000/feeds/:feedId/like
+    @PostMapping("/{feedId}/like") // (Post) http://52.79.187.77/feeds/:feedId/like
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -108,7 +104,7 @@ public class FeedController {
             @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @PostMapping("/{feedId}/report") // (POST) 127.0.0.1:9000/feeds/:feedId/report
+    @PostMapping("/{feedId}/report") // (POST) http://52.79.187.77/feeds/:feedId/report
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -140,7 +136,7 @@ public class FeedController {
             @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @GetMapping("/{feedId}/comments") // (GET) 127.0.0.1:9000/feeds/:feedId/comments
+    @GetMapping("/{feedId}/comments") // (GET) http://52.79.187.77/feeds/:feedId/comments
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -172,7 +168,7 @@ public class FeedController {
             @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @PostMapping("/{feedId}/comments") // (POST) 127.0.0.1:9000/feeds/:feedId/comments
+    @PostMapping("/{feedId}/comments") // (POST) http://52.79.187.77/feeds/:feedId/comments
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -204,7 +200,7 @@ public class FeedController {
             @ApiImplicitParam(name = "commentId", value = "댓글 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @PostMapping("/comments/{commentId}/like") // (Post) 127.0.0.1:9000/feeds/comments/:commentId/like
+    @PostMapping("/comments/{commentId}/like") // (Post) http://52.79.187.77/feeds/comments/:commentId/like
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -236,7 +232,7 @@ public class FeedController {
             @ApiImplicitParam(name = "commentId", value = "댓글 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @DeleteMapping("/comments/{commentId}") // (POST) 127.0.0.1:9000/feeds/comments/:commentId
+    @DeleteMapping("/comments/{commentId}") // (POST) http://52.79.187.77/feeds/comments/:commentId
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),

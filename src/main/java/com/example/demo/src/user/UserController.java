@@ -25,14 +25,11 @@ public class UserController {
     public UserController(UserProvider userProvider, UserService userService, JwtService jwtService) {
         this.userProvider = userProvider;
         this.userService = userService;
-        this.jwtService = jwtService;        // UserController uc = new UserController(userProvider,userService,jwtService);
+        this.jwtService = jwtService;
     }
-//    public UserController(){
-//        UserController uc = new UserController();
-//    }
 
     //카카오 code 받기
-    @GetMapping("/auth/kakao/callback") //redirect_uri : /auth/kakao/callback
+    @GetMapping("/auth/kakao/callback") //redirect_uri : users/auth/kakao/callback
     public @ResponseBody
     String kakaoCallback(String code) {
         return "코드는 :" + code;
@@ -40,7 +37,7 @@ public class UserController {
 
     /**
      * 카카오 로그인 API
-     * [POST] user/log-in/kakao
+     * [POST] users/log-in/kakao
      *
      * @return BaseResponse<PostUserRes>
      */
@@ -50,10 +47,10 @@ public class UserController {
     @ApiOperation(value = "카카오 로그인 API")
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
-            @ApiResponse(code = 2004, message = "유효하지 않은 access_token 입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2004, message = "유효하지 않은 accessToken 입니다.",response = BaseResponse.class),
     })
-    public BaseResponse<PostLoginRes> createUser(@RequestBody PostLoginReq postLoginReq) throws BaseException {
-        KakaoProfile kakaoProfile = null;
+    public BaseResponse<PostLoginRes> kakaoLogin(@RequestBody PostLoginReq postLoginReq) throws BaseException {
+        KakaoProfileRes kakaoProfile = null;
         PostLoginRes postLoginRes = null;
         try {
             kakaoProfile = userProvider.getKakaoProfile(postLoginReq);
@@ -100,7 +97,7 @@ public class UserController {
 //     */
 //    //Query String
 //    @ResponseBody
-//    @GetMapping("") // (GET) 127.0.0.1:9000/app/users
+//    @GetMapping("") // (GET) http://52.79.187.77/app/users
 //    public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String Email) {
 //        try{
 //            if(Email == null){
@@ -122,7 +119,7 @@ public class UserController {
 //     */
 //    // Path-variable
 //    @ResponseBody
-//    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
+//    @GetMapping("/{userIdx}") // (GET) http://52.79.187.77/app/users/:userIdx
 //    public BaseResponse<GetUserRes> getUser(@PathVariable("userIdx") int userIdx) {
 //        // Get Users
 //        try{

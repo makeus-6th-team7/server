@@ -2,15 +2,11 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.src.user.model.*;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 @Repository
 public class UserDao {
@@ -23,9 +19,9 @@ public class UserDao {
     }
 
 
-    public int createUser(KakaoProfile kakaoProfile){
+    public int createUser(KakaoProfileRes kakaoProfile){
         String createUserQuery = "insert into user (kakaoId, userId, profileImgUrl,email) VALUES (?,?,?)";
-        Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.properties.getProfile_image(), kakaoProfile.kakao_account.getEmail()};
+        Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.getProperties().getProfile_image(), kakaoProfile.getKakao_account().getEmail()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
         String lastInsertIdQuery = "select last_insert_id()";

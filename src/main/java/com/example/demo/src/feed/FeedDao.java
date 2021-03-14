@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.src.feed.model.*;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 @Repository
 public class FeedDao {
@@ -48,8 +47,8 @@ public class FeedDao {
                 commentId);
     }
 
-    public GetFeedRes getFeedDetail(int userIdx, int feedId){
-        GetFeedRes getFeedRes = null;
+    public GetFeedFromDao getFeedDetail(int userIdx, int feedId){
+        GetFeedFromDao getFeedFromDao = null;
 
         String getFeedDetailQuery = "" +
                 "select *\n" +
@@ -108,8 +107,8 @@ public class FeedDao {
                 "    on feed.id = feedImg.feedId\n" +
                 "    where feed.isDeleted = 'N' and feedImg.isDeleted = 'N' and feed.id = ? ) as feedImgNum;";
         Object[] getFeedDetailParams = new Object[]{feedId,feedId,userIdx,feedId,feedId,feedId,userIdx,feedId};
-        getFeedRes = this.jdbcTemplate.queryForObject(getFeedDetailQuery,
-                (rs, rowNum) -> new GetFeedRes(
+        getFeedFromDao = this.jdbcTemplate.queryForObject(getFeedDetailQuery,
+                (rs, rowNum) -> new GetFeedFromDao(
                         rs.getInt("userIdx"),
                         rs.getString("userId"),
                         rs.getString("profileImgUrl"),
@@ -117,8 +116,8 @@ public class FeedDao {
                         rs.getInt("retouchedDegree"),
                         rs.getString("review"),
                         rs.getString("title"),
-                        rs.getString("longitude"),
-                        rs.getString("latitude"),
+                        rs.getDouble("longitude"),
+                        rs.getDouble("latitude"),
                         rs.getInt("price"),
                         rs.getString("period"),
                         rs.getInt("likeNum"),
@@ -135,22 +134,22 @@ public class FeedDao {
                 "from feedProsCons join prosCons\n" +
                 "on feedProsCons.prosConsId = prosCons.id\n" +
                 "where feedProsCons.isDeleted = 'N' and prosCons.type = 'P' and feedId = ?;";
-        getFeedRes.setPros(this.jdbcTemplate.queryForList(getFeedProsQuery, String.class,  feedId));
+        getFeedFromDao.setPros(this.jdbcTemplate.queryForList(getFeedProsQuery, String.class,  feedId));
 
         String getFeedConsQuery ="" +
                 "select prosCons.name\n" +
                 "from feedProsCons join prosCons\n" +
                 "on feedProsCons.prosConsId = prosCons.id\n" +
                 "where feedProsCons.isDeleted = 'N' and prosCons.type = 'C' and feedId = ?;";
-        getFeedRes.setCons(this.jdbcTemplate.queryForList(getFeedConsQuery, String.class,  feedId));
+        getFeedFromDao.setCons(this.jdbcTemplate.queryForList(getFeedConsQuery, String.class,  feedId));
 
         String getFeedImgUrlQuery ="select feedImg.feedImgUrl as imgUrl\n" +
                 "    from feed join feedImg\n" +
                 "    on feed.id = feedImg.feedId\n" +
                 "    where feed.isDeleted = 'N' and feedImg.isDeleted = 'N' and feed.id = ?;";
-        getFeedRes.setFeedImgUrls(this.jdbcTemplate.queryForList(getFeedImgUrlQuery, String.class,  feedId));
+        getFeedFromDao.setFeedImgUrls(this.jdbcTemplate.queryForList(getFeedImgUrlQuery, String.class,  feedId));
 
-        return getFeedRes;
+        return getFeedFromDao;
     }
     public GetCommentRes getComments(int userIdx, int feedId){
         String getCommentsQuery = "" +

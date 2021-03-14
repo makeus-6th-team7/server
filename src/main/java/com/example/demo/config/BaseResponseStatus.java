@@ -24,7 +24,7 @@ public enum BaseResponseStatus {
     EMPTY_JWT(false, 2001, "JWT를 입력해주세요."),
     INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다."),
     INVALID_USER(false,2003,"권한이 없는 유저의 접근입니다."),
-    INVALID_ACCESS_TOKEN(false,2004,"유효하지 않은 access_token 입니다."),
+    INVALID_ACCESS_TOKEN(false,2004,"유효하지 않은 accessToken 입니다."),
 
     // users
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
@@ -64,11 +64,13 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
+
+    KAKAO_LOCATION_SERVER_ERROR(false, 4020, "카카오 서버에서 주소정보 요청에 실패했습니다.");
 
 
-    // 5000 : 필요시 만들어서 쓰세요
-    // 6000 : 필요시 만들어서 쓰세요
+    // 5000 : 필요시 만들어서 쓰기
+    // 6000 : 필요시 만들어서 쓰기
 
 
     private final boolean isSuccess;

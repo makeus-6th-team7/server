@@ -1,7 +1,6 @@
 package com.example.demo.src.feed;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.feed.model.GetFeedRes;
 import com.example.demo.src.feed.model.PostCommentRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
