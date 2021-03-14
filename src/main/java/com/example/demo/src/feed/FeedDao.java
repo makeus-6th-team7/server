@@ -46,7 +46,17 @@ public class FeedDao {
                 int.class,
                 commentId);
     }
-
+    public void updateViewTable(int userIdx, int feedId){
+        // 자신의 피드를 조회했는지 체크 (자신의 피드조회시 업데이트 X)
+        boolean checkMyFeed = false;
+        if(getUserIdxOfFeed(feedId) == userIdx) checkMyFeed = true;
+        //자신의 피드가 아니라면 viewFeed 테이블 업데이트
+        if(!checkMyFeed) {
+            String updateViewFeedQuery = "insert into viewFeed (feedId,userIdx) values(?,?)\n" +
+                    "on duplicate key update updatedAt = current_timestamp;";
+            this.jdbcTemplate.update(updateViewFeedQuery, feedId, userIdx);
+        }
+    }
     public GetFeedFromDao getFeedDetail(int userIdx, int feedId){
         GetFeedFromDao getFeedFromDao = null;
 
@@ -148,7 +158,8 @@ public class FeedDao {
                 "    on feed.id = feedImg.feedId\n" +
                 "    where feed.isDeleted = 'N' and feedImg.isDeleted = 'N' and feed.id = ?;";
         getFeedFromDao.setFeedImgUrls(this.jdbcTemplate.queryForList(getFeedImgUrlQuery, String.class,  feedId));
-
+        //viewFeed 테이블 업데이트
+        updateViewTable(userIdx, feedId);
         return getFeedFromDao;
     }
     public GetCommentRes getComments(int userIdx, int feedId){

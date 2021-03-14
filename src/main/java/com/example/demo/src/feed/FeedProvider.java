@@ -107,5 +107,4 @@ public class FeedProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
 }
