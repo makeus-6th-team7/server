@@ -158,6 +158,12 @@ public class FeedDao {
                 "    on feed.id = feedImg.feedId\n" +
                 "    where feed.isDeleted = 'N' and feedImg.isDeleted = 'N' and feed.id = ?;";
         getFeedFromDao.setFeedImgUrls(this.jdbcTemplate.queryForList(getFeedImgUrlQuery, String.class,  feedId));
+
+        String getTagQuery ="select tag.name\n" +
+                "from feedTag join tag\n" +
+                "on feedTag.tagId = tag.id\n" +
+                "where feedTag.isDeleted = 'N' and feedId = ?";
+        getFeedFromDao.setTags(this.jdbcTemplate.queryForList(getTagQuery, String.class,  feedId));
         //viewFeed 테이블 업데이트
         updateViewTable(userIdx, feedId);
         return getFeedFromDao;

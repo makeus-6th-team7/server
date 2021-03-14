@@ -35,6 +35,7 @@ public class GetFeedFromDao {
     private List<String> pros = null;
     private List<String> cons = null;
     private List<String> feedImgUrls = null;
+    private List<String> tags = null;
 
     public GetFeedFromDao(int userIdx, String userId, String profileImgUrl, int temperature, int retouchedDegree, String review, String title, Double longitude, Double latitude, int price, String period, int likeNum, boolean checkLike, String createdAt, int viewNum, int savedNum, int commentNum, boolean checkReport, int feedImgNum) {
         this.userIdx = userIdx;

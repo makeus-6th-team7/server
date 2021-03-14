@@ -50,7 +50,7 @@ public class FeedProvider {
                                                    getFeedFromDao.getLikeNum(),getFeedFromDao.isCheckLike(),getFeedFromDao.getCreatedAt(),
                                                    getFeedFromDao.getViewNum(),getFeedFromDao.getSavedNum(),getFeedFromDao.getCommentNum(),
                                                    getFeedFromDao.isCheckReport(),getFeedFromDao.getFeedImgNum(),getFeedFromDao.getPros(),
-                                                   getFeedFromDao.getCons(),getFeedFromDao.getFeedImgUrls());
+                                                   getFeedFromDao.getCons(),getFeedFromDao.getFeedImgUrls(),getFeedFromDao.getTags());
             return getFeedRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
