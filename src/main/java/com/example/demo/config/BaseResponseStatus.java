@@ -66,8 +66,8 @@ public enum BaseResponseStatus {
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
 
-    KAKAO_LOCATION_SERVER_ERROR(false, 4020, "카카오 서버에서 주소정보 요청에 실패했습니다.");
-
+    KAKAO_LOCATION_SERVER_ERROR(false, 4020, "카카오 서버에서 주소정보 요청에 실패했습니다."),
+    NAVER_SHOPPING_SERVER_ERROR(false, 4021, "네이버 서버에서 쇼핑정보 요청에 실패했습니다.");
 
     // 5000 : 필요시 만들어서 쓰기
     // 6000 : 필요시 만들어서 쓰기

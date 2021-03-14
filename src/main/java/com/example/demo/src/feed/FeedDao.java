@@ -33,16 +33,27 @@ public class FeedDao {
                 int.class,
                 commentId);
     }
-
+    public int checkAirBnB(int feedId){
+        String checkAirBnBQuery = "select exists(select id from feed where isDeleted = 'N' and isAirBnB = 'Y' and id = ?);";
+        return this.jdbcTemplate.queryForObject(checkAirBnBQuery,
+                int.class,
+                feedId);
+    }
+    public String getAirBnBLink(int feedId){
+        String checkAirBnBQuery = "select airBnBLink from feed where isDeleted = 'N' and id = ?;";
+        return this.jdbcTemplate.queryForObject(checkAirBnBQuery,
+                String.class,
+                feedId);
+    }
     public int checkFeedId (int feedId){
-        String checkFeedIdQUery = "select exists(select id from feed where isDeleted = 'N' and id = ?);";
-        return this.jdbcTemplate.queryForObject(checkFeedIdQUery,
+        String checkFeedIdQuery = "select exists(select id from feed where isDeleted = 'N' and id = ?);";
+        return this.jdbcTemplate.queryForObject(checkFeedIdQuery,
                 int.class,
                 feedId);
     }
     public int checkCommentId (int commentId){
-        String checkFeedIdQUery = "select exists(select id from comment where isDeleted = 'N' and id = ?);";
-        return this.jdbcTemplate.queryForObject(checkFeedIdQUery,
+        String checkFeedIdQuery = "select exists(select id from comment where isDeleted = 'N' and id = ?);";
+        return this.jdbcTemplate.queryForObject(checkFeedIdQuery,
                 int.class,
                 commentId);
     }
@@ -56,6 +67,13 @@ public class FeedDao {
                     "on duplicate key update updatedAt = current_timestamp;";
             this.jdbcTemplate.update(updateViewFeedQuery, feedId, userIdx);
         }
+    }
+    public String getTitleFromFeedId(int feedId){
+        String getTitleQuery = "select feed.title from feed where feed.id = ?;";
+
+        return this.jdbcTemplate.queryForObject(getTitleQuery,
+                String.class,
+                feedId);
     }
     public GetFeedFromDao getFeedDetail(int userIdx, int feedId){
         GetFeedFromDao getFeedFromDao = null;

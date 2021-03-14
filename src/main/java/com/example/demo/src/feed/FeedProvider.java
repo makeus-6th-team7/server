@@ -2,13 +2,14 @@ package com.example.demo.src.feed;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.secret.Secret;
-import com.example.demo.src.feed.model.GetCommentRes;
-import com.example.demo.src.feed.model.GetFeedFromDao;
-import com.example.demo.src.feed.model.GetFeedRes;
-import com.example.demo.src.feed.model.KakaoAddressRes;
+import com.example.demo.src.feed.model.*;
 import com.example.demo.utils.JwtService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Comparator;
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -57,7 +61,76 @@ public class FeedProvider {
         }
     }
     /**
+     * 게시글 숙소의 최저가 링크 반환하는 메소드
+     * 네이버 쇼핑 API 사용
+     */
+    public GetFeedLinksRes getFeedLinks(int feedId) throws BaseException {
+        try{
+            GetFeedLinksRes getFeedLinksRes;
+            // 에어비앤비일 경우 : 사용자가 입력한 예약링크 불러오기
+            if(feedDao.checkAirBnB(feedId) == 1){
+                getFeedLinksRes = new GetFeedLinksRes();
+                String airBnBLink = feedDao.getAirBnBLink(feedId);
+                getFeedLinksRes.addItem("에어비앤비", airBnBLink);
+            }
+            // 에어비앤비 아닐 경우 : 최저가 링크 가져오기 (네이버 API로)
+            else{
+                // 해당 피드의 title 가져오기
+                String title = feedDao.getTitleFromFeedId(feedId);
+
+                RestTemplate rt = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("X-Naver-Client-Id",Secret.NAVER_CLIENT_ID);
+                headers.add("X-Naver-Client-Secret",Secret.NAVER_CLIENT_SECRET);
+                HttpEntity<MultiValueMap<String,String>> itemRequest = new HttpEntity<>(headers);
+
+                // 네이버 shopping API 요청하기 - GET방식으로 - 그리고 response 변수의 응답 받음.
+                ResponseEntity<String> response = rt.exchange(
+                        String.format("https://openapi.naver.com/v1/search/shop.json?query=%s",title),
+                        HttpMethod.GET,
+                        itemRequest,
+                        String.class
+                );
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+                NaverShoppingRes naverShoppingRes = objectMapper.readValue(response.getBody(), NaverShoppingRes.class);
+                // 최저가 링크 3개 선택
+                getFeedLinksRes = selectLowestPriceItems(naverShoppingRes,3);
+            }
+            return getFeedLinksRes;
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new BaseException(NAVER_SHOPPING_SERVER_ERROR);
+        }
+    }
+    /**
+     * 네이버 쇼핑 API로 부터 받은 정보들-> 최저가링크 num개로 추리는 메소드
+     * @param naverShoppingRes 네이버 쇼핑 API로 부터 받은 정보들
+     * @param num 최저가 링크 개수
+     */
+    public GetFeedLinksRes selectLowestPriceItems(NaverShoppingRes naverShoppingRes, int num){
+        GetFeedLinksRes getFeedLinksRes = new GetFeedLinksRes();
+        // 가격순으로 정렬
+        List <NaverShoppingRes.Item> items = naverShoppingRes.getItems();
+        items.sort(Comparator.naturalOrder());
+
+        int count = 0;
+        for(val item: items ){
+            String price = item.getLprice();
+            String category = item.getCategory3();
+            if( !price.equals("0") && category.equals("국내숙박")){
+                getFeedLinksRes.addItem(item.getMallName(),item.getLink());
+                count++;
+                if(count == num) break;
+            }
+        }
+
+        return getFeedLinksRes;
+    }
+
+    /**
      * (x:경도, y:위도) 를 입력으로 받아 주소를 반환하는 메소드
+     * 카카오 로컬 API 사용
      */
     //
     public KakaoAddressRes getAdressByCordinates(Double x, Double y) throws BaseException {

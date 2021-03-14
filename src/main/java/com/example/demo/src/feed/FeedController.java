@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("feeds")
 public class FeedController {
@@ -44,9 +46,9 @@ public class FeedController {
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
             @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
-            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 4020, message = "카카오 서버에서 주소정보 요청에 실패했습니다.",response = BaseResponse.class)
     })
-//    public BaseResponse<GetFeedRes> getFeedDetail(@PathVariable("feedId") int feedId) {
     public BaseResponse<GetFeedRes> getFeedDetail(@PathVariable("feedId") int feedId) {
 
         int userIdx = 0;
@@ -57,6 +59,40 @@ public class FeedController {
             // Get FeedDetail
             GetFeedRes getFeedRes = feedProvider.getFeedDetail(userIdx,feedId);
             return new BaseResponse<>(getFeedRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
+     * 게시물 링크조회 API
+     * [GET] /feeds/:feedId/links
+     * @return BaseResponse<List<String>>
+     */
+    // Path-variable
+    @ApiOperation(value = "게시물 링크조회 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
+    })
+    @ResponseBody
+    @GetMapping("/{feedId}/links") // (GET) http://52.79.187.77/feeds/:feedId/links
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 4021, message = "네이버 서버에서 쇼핑정보 요청에 실패했습니다.",response = BaseResponse.class)
+
+    })
+    public BaseResponse<GetFeedLinksRes> getFeedLinks(@PathVariable("feedId") int feedId) {
+
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+
+            // Get FeedLinks
+            GetFeedLinksRes getFeedLinksRes = feedProvider.getFeedLinks(feedId);
+            return new BaseResponse<>(getFeedLinksRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
