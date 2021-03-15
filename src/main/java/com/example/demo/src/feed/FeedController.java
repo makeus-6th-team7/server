@@ -29,7 +29,54 @@ public class FeedController {
         this.feedService = feedService;
         this.jwtService = jwtService;
     }
-
+    /**
+     * 게시물 등록 API
+     * [POST] /feeds
+     * @return BaseResponse<PostFeedRes>
+     */
+    // Path-variable
+//    @ApiOperation(value = "게시물 등록 API")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "title", value = "숙소 이름", required = true, dataType = "String", paramType = "param"),
+//            @ApiImplicitParam(name = "isAirBnB", value = "에어비앤비 일 경우: true / 아닐 경우: false", required = true, dataType = "boolean", paramType = "param"),
+//            @ApiImplicitParam(name = "airBnBLink", value = "에어비앤비 링크 (에어비앤비일 경우 필수 입력) ", required = false, dataType = "String", paramType = "param"),
+//            @ApiImplicitParam(name = "feedImgUrls", value = "숙소 사진 URL ", required = true, dataType = "List<String>", paramType = "param"),
+//            @ApiImplicitParam(name = "startPeriod", value = "숙박 기간-시작날짜", required = true, dataType = "String", paramType = "param"),
+//            @ApiImplicitParam(name = "endPeriod", value = "숙박 기간-끝날짜", required = true, dataType = "String", paramType = "param"),
+//            @ApiImplicitParam(name = "price", value = "가격 (1박 기준)", required =  true, dataType = "int", paramType = "param"),
+//            @ApiImplicitParam(name = "longitude", value = "숙소 위치 좌표 - 경도 (에어비앤비 아닌 경우 필수입력)", required = false, dataType = "String", paramType = "param"),
+//            @ApiImplicitParam(name = "latitude", value = "숙소 위치 좌표 - 위도 (에어비앤비 아닌 경우 필수입력)", required = false, dataType = "String", paramType = "param"),
+//            // 추후 변경
+//            @ApiImplicitParam(name = "address", value = "숙소 위치 (에어비앤비인 경우 필수 입력)", required = false, dataType = "String", paramType = "param"),
+//            @ApiImplicitParam(name = "review", value = "후기", required = true, dataType = "String", paramType = "param"),
+//            @ApiImplicitParam(name = "pros", value = "장점", required = false, dataType = "List<String>", paramType = "param"),
+//            @ApiImplicitParam(name = "cons", value = "단점", required = false, dataType = "List<String>", paramType = "param"),
+//            @ApiImplicitParam(name = "tags", value = "태그", required = false, dataType = "List<String>", paramType = "param"),
+//            @ApiImplicitParam(name = "retouchedDegree", value = "보정정도", required = false, dataType = "int", paramType = "param"),
+//    })
+//    @ResponseBody
+//    @PostMapping("/{feedId}") // (GET) http://52.79.187.77/feeds/:feedId
+//    @ApiResponses({
+//            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+//            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+//            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+//            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class),
+//            @ApiResponse(code = 4020, message = "카카오 서버에서 주소정보 요청에 실패했습니다.",response = BaseResponse.class)
+//    })
+//    public BaseResponse<GetFeedRes> postFeed(@PathVariable("feedId") int feedId) {
+//
+//        int userIdx = 0;
+//        try {
+//            //jwt에서 idx 추출.
+//            userIdx = jwtService.getUserIdx();
+//
+//            // Get FeedDetail
+//            GetFeedRes getFeedRes = feedProvider.getFeedDetail(userIdx,feedId);
+//            return new BaseResponse<>(getFeedRes);
+//        } catch(BaseException exception){
+//            return new BaseResponse<>((exception.getStatus()));
+//        }
+//    }
     /**
      * 게시물 상세조회 API
      * [GET] /feeds/:feedId
@@ -201,7 +248,7 @@ public class FeedController {
     // Path-variable
     @ApiOperation(value = "댓글 생성 API")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path"),
+            @ApiImplicitParam(name = "feedId", value = "피드 식별자", required = true, dataType = "int", paramType = "path")
     })
     @ResponseBody
     @PostMapping("/{feedId}/comments") // (POST) http://52.79.187.77/feeds/:feedId/comments
