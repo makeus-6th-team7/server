@@ -1,5 +1,6 @@
 package com.example.demo.src.feed;
 
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,10 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.src.feed.model.*;
 
 import javax.sql.DataSource;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Repository
 public class FeedDao {
@@ -303,7 +308,97 @@ public class FeedDao {
             this.jdbcTemplate.update(insertFeedReportQuery, feedId, userIdx);
         }
     }
+    @Transactional
+    public int postFeeds(int userIdx, PostFeedReq postFeedReq){
+        // 게시물 업로드
+        String postFeedQury = "insert into feed (userIdx, isAirBnB, title, retouchedDegree, latitude,\n" +
+                "                  longitude,price,startPeriod,endPeriod,address, review,airBnBLink)\n" +
+                "            value(?,?,?,?,?,?,?,?,?,?,?,?);";
+        String checkAirBnB = "N";
+        if(postFeedReq.isAirBnB()) checkAirBnB = "Y";
 
+        Object[] createFeedParams = new Object[]{userIdx, checkAirBnB, postFeedReq.getTitle(), postFeedReq.getRetouchedDegree(),
+                                                postFeedReq.getLatitude(), postFeedReq.getLongitude(), postFeedReq.getPrice(),
+                                                postFeedReq.getStartPeriod(), postFeedReq.getEndPeriod(), postFeedReq.getAddress(),
+                                                postFeedReq.getReview(), postFeedReq.getAirBnBLink()};
+        this.jdbcTemplate.update(postFeedQury,createFeedParams);
+        // 업로드한 게시물 feedId가져오기
+        String lastInsertIdQuery = "select last_insert_id()";
+        int feedId = this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+
+        // 숙소 사진 url 업로드
+        List<String> feedImgUrls = postFeedReq.getFeedImgUrls();
+        String postFeedImgUrlQuery = "insert into feedImg(feedId,feedImgUrl) values (?,?);";
+        for(val feedImgUrl : feedImgUrls){
+            this.jdbcTemplate.update(postFeedImgUrlQuery, feedId, feedImgUrl);
+        }
+        // 장점 리스트 업로드
+        List<String> pros = postFeedReq.getPros();
+        postProsCons(feedId, pros, "P");
+        // 단점 리스트 업로드
+        List<String> cons = postFeedReq.getCons();
+        postProsCons(feedId, cons,"C");
+        // 태그 리스트 업로드
+        List<String> tags = postFeedReq.getTags();
+        postTags(feedId, tags);
+        String lastInsertCommentQuery = "select last_insert_id()";
+        return this.jdbcTemplate.queryForObject(lastInsertCommentQuery,int.class);
+
+    }
+    public void postProsCons(int feedId, List<String> elems, String type){
+        for (val elem : elems){
+            // prosCons가 DB에 있는지 확인
+            String checkProsConsQuery ="select exists(select id from prosCons where name = ?);";
+            boolean checkProsCons = this.jdbcTemplate.queryForObject(checkProsConsQuery,boolean.class,elem);
+
+            // prosCons id가져오기
+            int prosConsId;
+            String getProsConsIdQuery = "select id from prosCons where name = ? and type = ?;";
+
+            // prosCons가 DB에 있으면: prosConsId 찾기
+            if(checkProsCons){
+                prosConsId = this.jdbcTemplate.queryForObject(getProsConsIdQuery,int.class, elem,type);
+            }
+            // prosCons가 DB에 없으면: 새로 생성후, prosConsId 찾기
+            else{
+                String insertProsConsQeury = "insert into prosCons (name, type, isAddedByUser) values (?,?,'Y');";
+                this.jdbcTemplate.update(insertProsConsQeury,elem,type);
+                prosConsId = this.jdbcTemplate.queryForObject(getProsConsIdQuery,int.class,elem,type);
+            }
+
+            // feedProsCons에 업로드
+            String postFeedProsConsQuery = "insert into feedProsCons(feedId, prosConsId) values(?,?);\n";
+            this.jdbcTemplate.update(postFeedProsConsQuery, feedId, prosConsId);
+
+        }
+    }
+    public void postTags(int feedId, List<String> tags){
+        for (val tag : tags){
+            // Tag가 DB에 있는지 확인
+            String checkTagQuery ="select exists(select id from tag where name = ?);";
+            boolean checkProsCons = this.jdbcTemplate.queryForObject(checkTagQuery,boolean.class,tag);
+
+            // Tag id가져오기
+            int tagId;
+            String getTagIdQuery = "select id from tag where name = ?;";
+
+            // Tag가 DB에 있으면: tagId 찾기
+            if(checkProsCons){
+                tagId = this.jdbcTemplate.queryForObject(getTagIdQuery,int.class, tag);
+            }
+            // Tag가 DB에 없으면: 새로 생성후, tagId 찾기
+            else{
+                String insertTagQeury = "insert into tag (name) values (?);";
+                this.jdbcTemplate.update(insertTagQeury,tag);
+                tagId = this.jdbcTemplate.queryForObject(getTagIdQuery,int.class,tag);
+            }
+
+            // feedTag에 업로드
+            String postFeedTagQuery = "insert into feedTag(feedId, tagId) values(?,?);\n";
+            this.jdbcTemplate.update(postFeedTagQuery, feedId, tagId);
+
+        }
+    }
     public int postComments(int userIdx, int feedId, String content){
         String postCommentQury = "insert into comment (feedId, userIdx, content) values(?,?,?);";
         this.jdbcTemplate.update(postCommentQury,feedId, userIdx, content);

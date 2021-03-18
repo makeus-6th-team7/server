@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("feeds")
@@ -29,54 +32,107 @@ public class FeedController {
         this.feedService = feedService;
         this.jwtService = jwtService;
     }
+
     /**
      * 게시물 등록 API
      * [POST] /feeds
      * @return BaseResponse<PostFeedRes>
      */
     // Path-variable
-//    @ApiOperation(value = "게시물 등록 API")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "title", value = "숙소 이름", required = true, dataType = "String", paramType = "param"),
-//            @ApiImplicitParam(name = "isAirBnB", value = "에어비앤비 일 경우: true / 아닐 경우: false", required = true, dataType = "boolean", paramType = "param"),
-//            @ApiImplicitParam(name = "airBnBLink", value = "에어비앤비 링크 (에어비앤비일 경우 필수 입력) ", required = false, dataType = "String", paramType = "param"),
-//            @ApiImplicitParam(name = "feedImgUrls", value = "숙소 사진 URL ", required = true, dataType = "List<String>", paramType = "param"),
-//            @ApiImplicitParam(name = "startPeriod", value = "숙박 기간-시작날짜", required = true, dataType = "String", paramType = "param"),
-//            @ApiImplicitParam(name = "endPeriod", value = "숙박 기간-끝날짜", required = true, dataType = "String", paramType = "param"),
-//            @ApiImplicitParam(name = "price", value = "가격 (1박 기준)", required =  true, dataType = "int", paramType = "param"),
-//            @ApiImplicitParam(name = "longitude", value = "숙소 위치 좌표 - 경도 (에어비앤비 아닌 경우 필수입력)", required = false, dataType = "String", paramType = "param"),
-//            @ApiImplicitParam(name = "latitude", value = "숙소 위치 좌표 - 위도 (에어비앤비 아닌 경우 필수입력)", required = false, dataType = "String", paramType = "param"),
-//            // 추후 변경
-//            @ApiImplicitParam(name = "address", value = "숙소 위치 (에어비앤비인 경우 필수 입력)", required = false, dataType = "String", paramType = "param"),
-//            @ApiImplicitParam(name = "review", value = "후기", required = true, dataType = "String", paramType = "param"),
-//            @ApiImplicitParam(name = "pros", value = "장점", required = false, dataType = "List<String>", paramType = "param"),
-//            @ApiImplicitParam(name = "cons", value = "단점", required = false, dataType = "List<String>", paramType = "param"),
-//            @ApiImplicitParam(name = "tags", value = "태그", required = false, dataType = "List<String>", paramType = "param"),
-//            @ApiImplicitParam(name = "retouchedDegree", value = "보정정도", required = false, dataType = "int", paramType = "param"),
-//    })
-//    @ResponseBody
-//    @PostMapping("/{feedId}") // (GET) http://52.79.187.77/feeds/:feedId
-//    @ApiResponses({
-//            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
-//            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
-//            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
-//            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class),
-//            @ApiResponse(code = 4020, message = "카카오 서버에서 주소정보 요청에 실패했습니다.",response = BaseResponse.class)
-//    })
-//    public BaseResponse<GetFeedRes> postFeed(@PathVariable("feedId") int feedId) {
-//
-//        int userIdx = 0;
-//        try {
-//            //jwt에서 idx 추출.
-//            userIdx = jwtService.getUserIdx();
-//
-//            // Get FeedDetail
-//            GetFeedRes getFeedRes = feedProvider.getFeedDetail(userIdx,feedId);
-//            return new BaseResponse<>(getFeedRes);
-//        } catch(BaseException exception){
-//            return new BaseResponse<>((exception.getStatus()));
+    @ApiOperation(value = "게시물 생성 API")
+    @ResponseBody
+    @PostMapping("/{feedId}") // (POST) http://52.79.187.77/feeds
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+    })
+    //public BaseResponse<PostFeedRes> postFeeds(@RequestBody PostFeedReq postFeedReq) {
+    public BaseResponse<PostFeedRes> postFeeds(@Valid @RequestBody PostFeedReq postFeedReq){
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+            PostFeedRes postFeedRes = feedService.postFeeds(userIdx, postFeedReq);
+            return new BaseResponse<>(postFeedRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+
+        }
+
+        //validation
+//        // empty value validation
+//        if(postFeedReq.getTitle() == null){
+//            return new BaseResponse<>(EMPTY_TITLE);
 //        }
-//    }
+//        if(postFeedReq.getAirBnBLink() == null && postFeedReq.isAirBnB()==true){
+//            return new BaseResponse<>(EMPTY_AIRBNB_LINK);
+//        }
+//        if(postFeedReq.getFeedImgUrls() == null || postFeedReq.getFeedImgUrls().isEmpty()){
+//            return new BaseResponse<>(EMPTY_FEEDIMG_URLS);
+//        }
+//        if(postFeedReq.getStartPeriod() == null){
+//            return new BaseResponse<>(EMPTY_START_PERIOD);
+//        }
+//        if(postFeedReq.getEndPeriod() == null){
+//            return new BaseResponse<>(EMPTY_END_PERIOD);
+//        }
+//        if(postFeedReq.getPrice() == 0){
+//            return new BaseResponse<>(EMPTY_PRICE);
+//        }
+//        if(postFeedReq.getLongitude() == null){
+//            return new BaseResponse<>(EMPTY_LONGITUTDE);
+//        }
+//        if(postFeedReq.getLatitude() == null){
+//            return new BaseResponse<>(EMPTY_LATITUDE);
+//        }
+//        if(postFeedReq.getAddress() == null){
+//            return new BaseResponse<>(EMPTY_ADDRESS);
+//        }
+//        if(postFeedReq.getReview() == null){
+//            return new BaseResponse<>(EMPTY_REVIEW);
+//        }
+//        if(postFeedReq.getRetouchedDegree() == -1){
+//            return new BaseResponse<>(EMPTY_RETOUCHED_DEGREE);
+//        }
+//        // type error validation
+//        if( !(postFeedReq.getTitle() instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.isAirBnB() == true || postFeedReq.isAirBnB() == false)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.getAirBnBLink() instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_AIRRBNB_LINK);
+//        }
+//        if( !(postFeedReq.getFeedImgUrls() instanceof List
+//                && postFeedReq.getFeedImgUrls().get(0) instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.getStartPeriod() instanceof Integer)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.getTitle() instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.getTitle() instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.getTitle() instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.getTitle() instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+//        if( !(postFeedReq.getTitle() instanceof String)){
+//            return new BaseResponse<>(INVALID_TYPE_TITLE);
+//        }
+            //PostFeedRes postFeedRes = feedService.postFeeds(userIdx, postFeedReq);
+            //return new BaseResponse<>(postFeedRes);
+
+    }
+
+
     /**
      * 게시물 상세조회 API
      * [GET] /feeds/:feedId

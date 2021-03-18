@@ -60,6 +60,9 @@ dependencies {
     compile("io.swagger:swagger-annotations:1.5.21")
     compile("io.swagger:swagger-models:1.5.21")
 
+    //Validation Starter
+    implementation('org.springframework.boot:spring-boot-starter-validation')
+
 }
 
 test {
