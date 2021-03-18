@@ -25,11 +25,11 @@ public class PostFeedReq {
     @NotEmpty(message = "feedImgUrl 값을 입력해 주세요")
     @ApiModelProperty(value = "숙소 사진 URL")
     private List<String> feedImgUrls;
-    @NotBlank
+    @NotBlank(message = "startPeriod에 값을 입력해 주세요")
     @DateCheck(message = "startPeriod에 올바른 date 형식을 입력해 주세요")
     @ApiModelProperty(value = "숙박 기간-시작날짜", example="2021-01-20")
     private String startPeriod;
-    @NotBlank
+    @NotBlank(message = "endPeriod에 값을 입력해 주세요")
     @DateCheck(message = "endPeriod에 올바른 date 형식을 입력해 주세요")
     @ApiModelProperty(value = "숙박 기간-끝날짜", example="2021-01-22")
     private String endPeriod;
