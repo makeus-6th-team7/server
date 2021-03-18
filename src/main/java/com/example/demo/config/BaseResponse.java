@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.ResponseEntity;
 
 import static com.example.demo.config.BaseResponseStatus.SUCCESS;
 
@@ -37,6 +38,11 @@ public class BaseResponse<T> {
         this.isSuccess = status.isSuccess();
         this.message = status.getMessage();
         this.code = status.getCode();
+    }
+    public BaseResponse(ResponseEntity<String> status) {
+        this.isSuccess = false;
+        this.message = status.getBody();
+        this.code = status.getStatusCodeValue();
     }
 }
 

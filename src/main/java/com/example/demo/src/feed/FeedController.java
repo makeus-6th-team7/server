@@ -8,12 +8,13 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
-import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("feeds")
@@ -47,8 +48,11 @@ public class FeedController {
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
             @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
     })
-    //public BaseResponse<PostFeedRes> postFeeds(@RequestBody PostFeedReq postFeedReq) {
-    public BaseResponse<PostFeedRes> postFeeds(@Valid @RequestBody PostFeedReq postFeedReq){
+    public BaseResponse<PostFeedRes> postFeeds(@Valid @RequestBody PostFeedReq postFeedReq, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
+            return new BaseResponse<>(error);
+        }
         int userIdx = 0;
         try {
             //jwt에서 idx 추출.
@@ -56,45 +60,10 @@ public class FeedController {
             PostFeedRes postFeedRes = feedService.postFeeds(userIdx, postFeedReq);
             return new BaseResponse<>(postFeedRes);
         } catch(BaseException exception){
+            System.out.println(exception.getMessage());
             return new BaseResponse<>((exception.getStatus()));
 
         }
-
-        //validation
-//        // type error validation
-//        if( !(postFeedReq.getTitle() instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.isAirBnB() == true || postFeedReq.isAirBnB() == false)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.getAirBnBLink() instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_AIRRBNB_LINK);
-//        }
-//        if( !(postFeedReq.getFeedImgUrls() instanceof List
-//                && postFeedReq.getFeedImgUrls().get(0) instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.getStartPeriod() instanceof Integer)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.getTitle() instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.getTitle() instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.getTitle() instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.getTitle() instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-//        if( !(postFeedReq.getTitle() instanceof String)){
-//            return new BaseResponse<>(INVALID_TYPE_TITLE);
-//        }
-            //PostFeedRes postFeedRes = feedService.postFeeds(userIdx, postFeedReq);
-            //return new BaseResponse<>(postFeedRes);
 
     }
 

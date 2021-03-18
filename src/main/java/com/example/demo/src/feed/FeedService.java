@@ -21,8 +21,6 @@ public class FeedService {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-//    public PostFeedRes postFeeds(int userIdx, PostFeedReq postFeedReq) {
-//    }
     public PostFeedRes postFeeds(int userIdx, PostFeedReq postFeedReq) throws BaseException {
         try {
             int feedId = feedDao.postFeeds(userIdx,postFeedReq);
