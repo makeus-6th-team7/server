@@ -61,40 +61,6 @@ public class FeedController {
         }
 
         //validation
-//        // empty value validation
-//        if(postFeedReq.getTitle() == null){
-//            return new BaseResponse<>(EMPTY_TITLE);
-//        }
-//        if(postFeedReq.getAirBnBLink() == null && postFeedReq.isAirBnB()==true){
-//            return new BaseResponse<>(EMPTY_AIRBNB_LINK);
-//        }
-//        if(postFeedReq.getFeedImgUrls() == null || postFeedReq.getFeedImgUrls().isEmpty()){
-//            return new BaseResponse<>(EMPTY_FEEDIMG_URLS);
-//        }
-//        if(postFeedReq.getStartPeriod() == null){
-//            return new BaseResponse<>(EMPTY_START_PERIOD);
-//        }
-//        if(postFeedReq.getEndPeriod() == null){
-//            return new BaseResponse<>(EMPTY_END_PERIOD);
-//        }
-//        if(postFeedReq.getPrice() == 0){
-//            return new BaseResponse<>(EMPTY_PRICE);
-//        }
-//        if(postFeedReq.getLongitude() == null){
-//            return new BaseResponse<>(EMPTY_LONGITUTDE);
-//        }
-//        if(postFeedReq.getLatitude() == null){
-//            return new BaseResponse<>(EMPTY_LATITUDE);
-//        }
-//        if(postFeedReq.getAddress() == null){
-//            return new BaseResponse<>(EMPTY_ADDRESS);
-//        }
-//        if(postFeedReq.getReview() == null){
-//            return new BaseResponse<>(EMPTY_REVIEW);
-//        }
-//        if(postFeedReq.getRetouchedDegree() == -1){
-//            return new BaseResponse<>(EMPTY_RETOUCHED_DEGREE);
-//        }
 //        // type error validation
 //        if( !(postFeedReq.getTitle() instanceof String)){
 //            return new BaseResponse<>(INVALID_TYPE_TITLE);
@@ -361,6 +327,38 @@ public class FeedController {
         }
     }
     /**
+     * 게시물 삭제 API
+     * [DELETE] feeds/{feedId}
+     * @return BaseResponse
+     */
+    // Path-variable
+    @ApiOperation(value = "게시물 삭제 API")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "feedId", value = "게시물 식별자", required = true, dataType = "int", paramType = "path"),
+    })
+    @ResponseBody
+    @DeleteMapping("/feeds/{feedId}") // (DELETE) http://52.79.187.77/feeds/:feedId
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2020, message = "존재하지 않는 feedId입니다.",response = BaseResponse.class)
+    })
+    public BaseResponse deleteFeeds(@PathVariable("feedId") int feedId) {
+
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+
+            // delete feeds
+            feedService.deleteFeed(userIdx,feedId);
+            return new BaseResponse<>();
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    /**
      * 댓글 삭제 API
      * [DELETE] feeds/comments/{commentId}
      * @return BaseResponse
@@ -371,7 +369,7 @@ public class FeedController {
             @ApiImplicitParam(name = "commentId", value = "댓글 식별자", required = true, dataType = "int", paramType = "path"),
     })
     @ResponseBody
-    @DeleteMapping("/comments/{commentId}") // (POST) http://52.79.187.77/feeds/comments/:commentId
+    @DeleteMapping("/comments/{commentId}") // (DELETE) http://52.79.187.77/feeds/comments/:commentId
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -386,7 +384,7 @@ public class FeedController {
             userIdx = jwtService.getUserIdx();
 
             // delete comments
-            feedService.deleteCommentRes(userIdx,commentId);
+            feedService.deleteComment(userIdx,commentId);
             return new BaseResponse<>();
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

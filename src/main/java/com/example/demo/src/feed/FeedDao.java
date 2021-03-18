@@ -408,8 +408,12 @@ public class FeedDao {
 
     }
     public void deleteComments(int commentId){
-        String postCommentQury = "update comment set isDeleted = 'Y' where id =? ;";
-        this.jdbcTemplate.update(postCommentQury,commentId);
+        String deleteCommentQury = "update comment set isDeleted = 'Y' where id =? ;";
+        this.jdbcTemplate.update(deleteCommentQury,commentId);
+    }
+    public void deleteFeeds(int feedId){
+        String deleteFeedQury = "update feed set isDeleted = 'Y' where id =? ;";
+        this.jdbcTemplate.update(deleteFeedQury,feedId);
     }
 
 }

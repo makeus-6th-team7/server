@@ -66,7 +66,17 @@ public class FeedService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    public void deleteCommentRes (int userIdx, int commentId) throws BaseException {
+    public void deleteFeed (int userIdx, int feedId) throws BaseException {
+        if(feedDao.checkFeedId(feedId)==0) throw new BaseException(INVALID_FEED_ID);
+        // 다른 사람의 게시물을 삭제하려고 할 때
+        if(userIdx != feedDao.getUserIdxOfFeed(feedId)) throw new BaseException(INVALID_USER_REQ);
+        try {
+            feedDao.deleteFeeds(feedId);
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public void deleteComment (int userIdx, int commentId) throws BaseException {
         if(feedDao.checkCommentId(commentId)==0) throw new BaseException(INVALID_COMMENT_ID);
         // 다른 사람의 댓글을 삭제하려고 할 때
         if(userIdx != feedDao.getUserIdxOfComment(commentId)) throw new BaseException(INVALID_USER_REQ);

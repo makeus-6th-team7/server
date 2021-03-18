@@ -9,6 +9,9 @@ import java.util.List;
 
 @Data
 //생성자 어떡할지 생각
+//TO-DO:
+// validation annotation 추가
+// 사용 기기 추가
 public class PostFeedReq {
     @NotBlank(message = "title 값을 입력해주세요.")
     @ApiModelProperty(value = "숙소 이름(지도API에서 받은 정확한 상호명)", example="롯데 호텔 월드")
@@ -42,7 +45,6 @@ public class PostFeedReq {
     private List<String> tags;
     @ApiModelProperty(value = "보정정도",example = "5")
     private int retouchedDegree = -1;
-
 
     public boolean isAirBnB() {
         return this.checkAirBnB;
