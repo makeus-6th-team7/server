@@ -38,7 +38,6 @@ public class UserController {
     /**
      * 카카오 로그인 API
      * [POST] users/log-in/kakao
-     *
      * @return BaseResponse<PostUserRes>
      */
     // Body
@@ -55,14 +54,21 @@ public class UserController {
         try {
             kakaoProfile = userProvider.getKakaoProfile(postLoginReq);
         } catch (BaseException exception) {
+            System.out.println(exception.getMessage());
             return new BaseResponse<>((exception.getStatus()));
         }
         // 이미 존재하는 계정이면 로그인
-        if (userProvider.checkUserByKakaoId(kakaoProfile.getId()) == 1){
+        int kakaoId = kakaoProfile.getId();
+        if (userProvider.checkUserByKakaoId(kakaoId) == 1){
             try {
-                postLoginRes  = userProvider.logIn(kakaoProfile.getId());
+                postLoginRes  = userProvider.logIn(kakaoId);
+                // 아이디가 등록됐는지 체크
+                if(userProvider.checkUserIdIsKakaoId(postLoginRes.getUserIdx(),kakaoId)){
+                    postLoginRes.setNewUser(true);
+                }
                 return new BaseResponse<>(postLoginRes);
             } catch (BaseException exception) {
+                System.out.println(exception.getMessage());
                 return new BaseResponse<>((exception.getStatus()));
             }
         }
@@ -72,8 +78,36 @@ public class UserController {
                 postLoginRes  = userService.createUserByKakao(kakaoProfile);
                 return new BaseResponse<>(postLoginRes);
             } catch (BaseException exception) {
+                System.out.println(exception.getMessage());
                 return new BaseResponse<>((exception.getStatus()));
             }
+        }
+    }
+    /**
+     * 아이디 설정 API
+     * [POST] users/id
+     * @return BaseResponse<>
+     */
+    // Body
+    @ResponseBody
+    @PostMapping("/id")
+    @ApiOperation(value = "아이디 설정 API")
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+            @ApiResponse(code = 2011, message = "다른 분이 사용하고 있는 닉네임이에요.",response = BaseResponse.class)
+    })
+    public BaseResponse postUserId(@RequestBody PostUserIdReq postUserIdReq){
+
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+            userService.postUserId(userIdx,postUserIdReq.getUserId());
+            return new BaseResponse<>();
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
         }
     }
 

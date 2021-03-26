@@ -20,7 +20,7 @@ public class UserDao {
 
 
     public int createUser(KakaoProfileRes kakaoProfile){
-        String createUserQuery = "insert into user (kakaoId, userId, profileImgUrl,email) VALUES (?,?,?)";
+        String createUserQuery = "insert into user (kakaoId, userId, profileImgUrl,email) VALUES (?,?,?,?)";
         Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.getProperties().getProfile_image(), kakaoProfile.getKakao_account().getEmail()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
@@ -35,6 +35,20 @@ public class UserDao {
                 checkKakaoParams);
 
     }
+    public boolean checkDuplicatedId(String userId){
+        String checkDuplicatedIdQuery = "select exists(select userId from user where userId = ? and isDeleted = 'N')";
+        return this.jdbcTemplate.queryForObject(checkDuplicatedIdQuery,
+                boolean.class,
+                userId);
+
+    }
+    public String getUserIdByIdx(int userIdx){
+        String getUserIdByIdxQuery = "select userId from user where userIdx = ? and isDeleted = 'N';";
+        return this.jdbcTemplate.queryForObject(getUserIdByIdxQuery,
+                String.class,
+                userIdx);
+
+    }
     public int getUserIdxByKakaoId(Integer kakaoId){
         String getUserIdxQuery = "select userIdx from user where kakaoId = ? and isDeleted = 'N'";
         Integer getUserIdxParams = kakaoId;
@@ -42,6 +56,10 @@ public class UserDao {
                 int.class,
                 getUserIdxParams);
 
+    }
+    public void postUserId(int userIdx, String userId){
+        String postUserId = "update user set userId = ? where userIdx = ?;";
+        this.jdbcTemplate.update(postUserId,userId, userIdx);
     }
 //    public List<GetUserRes> getUsers(){
 //        String getUsersQuery = "select * from users";

@@ -37,8 +37,21 @@ public class UserService {
            int userIdx = userDao.createUser(kakaoProfile);
             //jwt 발급.
             String jwt = jwtService.createJwt(userIdx);
-            return new PostLoginRes(userIdx,jwt);
+            return new PostLoginRes(userIdx,jwt,true);
         } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public void postUserId(int userIdx, String userId) throws BaseException{
+
+        if(userDao.checkDuplicatedId(userId)){
+            throw new BaseException(USERS_DUPLICATED_ID);
+        }
+        try{
+            userDao.postUserId(userIdx,userId);
+
+        }catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

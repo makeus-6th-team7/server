@@ -75,10 +75,17 @@ public class UserProvider {
     public PostLoginRes logIn(Integer kakaoId) throws BaseException{
         int userIdx = userDao.getUserIdxByKakaoId(kakaoId);
         String jwt = jwtService.createJwt(userIdx);
-        return new PostLoginRes(userIdx,jwt);
+        return new PostLoginRes(userIdx,jwt,false);
 
     }
-
+    // userId가 등록됐는지 check
+    public boolean checkUserIdIsKakaoId(int userIdx, int kakaoId)throws BaseException{
+        try{
+            return userDao.getUserIdByIdx(userIdx).equals(Integer.toString(kakaoId));
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
 //    public List<GetUserRes> getUsers() throws BaseException{
 //        try{

@@ -28,6 +28,8 @@ public enum BaseResponseStatus {
 
     // users
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
+    USERS_DUPLICATED_ID(false, 2011, "다른 분이 사용하고 있는 닉네임이에요."),
+
 
     // [POST] /users
     POST_USERS_EMPTY_EMAIL(false, 2015, "이메일을 입력해주세요."),
@@ -39,34 +41,7 @@ public enum BaseResponseStatus {
     INVALID_COMMENT_ID(false, 2021, "존재하지 않는 commentId입니다."),
     INVALID_USER_REQ(false, 2022, "권한이 없는 유저의 요청입니다."),
 
-    // [POST] /feeds
-    EMPTY_TITLE(false, 2030, "title 값을 입력해 주세요."),
-    EMPTY_AIRBNB_LINK(false, 2032, "airBnbLink 값을 입력해 주세요."),
-    EMPTY_FEEDIMG_URLS(false, 2033, "feedImgUrls 값을 입력해 주세요."),
-    EMPTY_START_PERIOD(false, 2034, "startPeriod 값을 입력해 주세요."),
-    EMPTY_END_PERIOD(false, 2035, "endPeriod 값을 입력해 주세요."),
-    EMPTY_PRICE(false, 2036, "price 값을 입력해 주세요."),
-    EMPTY_LONGITUTDE(false, 2037, "longitude 값을 입력해 주세요."),
-    EMPTY_LATITUDE(false, 2038, "latitude 값을 입력해 주세요."),
-    EMPTY_ADDRESS(false, 2039, "address 값을 입력해 주세요."),
-    EMPTY_REVIEW(false, 2040, "review 값을 입력해 주세요."),
-    EMPTY_RETOUCHED_DEGREE(false, 2041, "retouchedDegree 값을 입력해 주세요"),
 
-    INVALID_TYPE_TITLE(false, 2050, "title에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_CHECK_AIRBNB(false, 2051, "isAirBnB에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_AIRRBNB_LINK(false, 2052, "airBnbLink에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_FEEDIMG_URLS(false, 2053, "feedImgUrls에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_START_PERIOD(false, 2054, "startPeriod에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_ENDP_ERIOD(false, 2055, "endPeriod에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_PRICE(false, 2056, "price에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_LONGITUTDE(false, 2057, "longitude에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_LATITUDE(false, 2058, "latitude에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_ADDRESS(false, 2059, "address에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_REVIEW(false, 2060, "review에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_PROS(false, 2061, "pros에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_CONS(false, 2062, "cons에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_TAGS(false, 2063, "tags에 잘못된 타입이 입력되었습니다."),
-    INVALID_TYPE_RETOUCHED_DEGREE(false, 2064, "retouchedDegree에 잘못된 타입이 입력되었습니다."),
 
     /**
      * 3000 : Response 오류
