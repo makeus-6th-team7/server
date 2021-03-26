@@ -24,7 +24,7 @@ public class UserDao {
         Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.getProperties().getProfile_image(), kakaoProfile.getKakao_account().getEmail()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
-        String lastInsertIdQuery = "select last_insert_id()";
+        String lastInsertIdQuery = "SELECT MAX(userIdx) FROM user";
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
     }
     public int checkKakaoId(Integer kakaoId){

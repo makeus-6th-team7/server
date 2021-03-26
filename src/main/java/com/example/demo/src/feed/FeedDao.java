@@ -308,41 +308,76 @@ public class FeedDao {
             this.jdbcTemplate.update(insertFeedReportQuery, feedId, userIdx);
         }
     }
-    @Transactional
-    public int postFeeds(int userIdx, PostFeedReq postFeedReq){
-        // 게시물 업로드
-        String postFeedQury = "insert into feed (userIdx, isAirBnB, title, retouchedDegree, latitude,\n" +
-                "                  longitude,price,startPeriod,endPeriod,address, review,airBnBLink)\n" +
-                "            value(?,?,?,?,?,?,?,?,?,?,?,?);";
-        String checkAirBnB = "N";
-        if(postFeedReq.isAirBnB()) checkAirBnB = "Y";
 
-        Object[] createFeedParams = new Object[]{userIdx, checkAirBnB, postFeedReq.getTitle(), postFeedReq.getRetouchedDegree(),
-                                                postFeedReq.getLatitude(), postFeedReq.getLongitude(), postFeedReq.getPrice(),
-                                                postFeedReq.getStartPeriod(), postFeedReq.getEndPeriod(), postFeedReq.getAddress(),
-                                                postFeedReq.getReview(), postFeedReq.getAirBnBLink()};
+    @Transactional
+    public int postNormalFeeds(int userIdx, PostNormalFeedReq postNormalFeedReq){
+        // 게시물 업로드
+        String postFeedQury = "insert into feed (userIdx, title, retouchedDegree, latitude,\n" +
+                "                  longitude,price,startPeriod,endPeriod, review, photoTool)\n" +
+                "            value(?,?,?,?,?,?,?,?,?,?);";
+
+        Object[] createFeedParams = new Object[]{userIdx, postNormalFeedReq.getTitle(), postNormalFeedReq.getRetouchedDegree(),
+                                                postNormalFeedReq.getLatitude(), postNormalFeedReq.getLongitude(),
+                                                postNormalFeedReq.getPrice(), postNormalFeedReq.getStartPeriod(),
+                                                postNormalFeedReq.getEndPeriod(), postNormalFeedReq.getReview(),postNormalFeedReq.getPhotoTool()};
         this.jdbcTemplate.update(postFeedQury,createFeedParams);
         // 업로드한 게시물 feedId가져오기
-        String lastInsertIdQuery = "select last_insert_id()";
+        String lastInsertIdQuery = " SELECT MAX(id) FROM feed;";
         int feedId = this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
 
         // 숙소 사진 url 업로드
-        List<String> feedImgUrls = postFeedReq.getFeedImgUrls();
+        List<String> feedImgUrls = postNormalFeedReq.getFeedImgUrls();
         String postFeedImgUrlQuery = "insert into feedImg(feedId,feedImgUrl) values (?,?);";
         for(val feedImgUrl : feedImgUrls){
             this.jdbcTemplate.update(postFeedImgUrlQuery, feedId, feedImgUrl);
         }
         // 장점 리스트 업로드
-        List<String> pros = postFeedReq.getPros();
+        List<String> pros = postNormalFeedReq.getPros();
         postProsCons(feedId, pros, "P");
         // 단점 리스트 업로드
-        List<String> cons = postFeedReq.getCons();
+        List<String> cons = postNormalFeedReq.getCons();
         postProsCons(feedId, cons,"C");
         // 태그 리스트 업로드
-        List<String> tags = postFeedReq.getTags();
+        List<String> tags = postNormalFeedReq.getTags();
         postTags(feedId, tags);
-        String lastInsertCommentQuery = "select last_insert_id()";
-        return this.jdbcTemplate.queryForObject(lastInsertCommentQuery,int.class);
+
+        return feedId;
+
+    }
+    @Transactional
+    public int postAirBnBFeeds(int userIdx, PostAirBnBFeedReq postAirBnBFeedReq){
+        // 게시물 업로드
+        String postFeedQury = "insert into feed (userIdx,isAirBnB,retouchedDegree, \n" +
+                "                 price,startPeriod,endPeriod,address, review,airBnBLink,additionalLocation, photoTool)\n" +
+                "            value(?,?,?,?,?,?,?,?,?,?,?);";
+
+        Object[] createFeedParams = new Object[]{userIdx, "Y" ,postAirBnBFeedReq.getRetouchedDegree(),
+                                                postAirBnBFeedReq.getPrice(), postAirBnBFeedReq.getStartPeriod(),
+                                                postAirBnBFeedReq.getEndPeriod(), postAirBnBFeedReq.getAddress(),
+                                                postAirBnBFeedReq.getReview(), postAirBnBFeedReq.getAirBnBLink(),
+                                                postAirBnBFeedReq.getAdditionalLocation(), postAirBnBFeedReq.getPhotoTool()};
+        this.jdbcTemplate.update(postFeedQury,createFeedParams);
+        // 업로드한 게시물 feedId가져오기
+        String lastInsertIdQuery = " SELECT MAX(id) FROM feed;";
+        int feedId = this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+
+        // 숙소 사진 url 업로드
+        List<String> feedImgUrls = postAirBnBFeedReq.getFeedImgUrls();
+        String postFeedImgUrlQuery = "insert into feedImg(feedId,feedImgUrl) values (?,?);";
+        for(val feedImgUrl : feedImgUrls){
+            this.jdbcTemplate.update(postFeedImgUrlQuery, feedId, feedImgUrl);
+        }
+        // 장점 리스트 업로드
+        List<String> pros = postAirBnBFeedReq.getPros();
+        postProsCons(feedId, pros, "P");
+        // 단점 리스트 업로드
+        List<String> cons = postAirBnBFeedReq.getCons();
+        postProsCons(feedId, cons,"C");
+        // 태그 리스트 업로드
+        List<String> tags = postAirBnBFeedReq.getTags();
+        postTags(feedId, tags);
+
+        return feedId;
 
     }
     public void postProsCons(int feedId, List<String> elems, String type){
@@ -403,7 +438,7 @@ public class FeedDao {
         String postCommentQury = "insert into comment (feedId, userIdx, content) values(?,?,?);";
         this.jdbcTemplate.update(postCommentQury,feedId, userIdx, content);
 
-        String lastInsertCommentQuery = "select last_insert_id()";
+        String lastInsertCommentQuery = "SELECT MAX(id) FROM comment;";
         return this.jdbcTemplate.queryForObject(lastInsertCommentQuery,int.class);
 
     }

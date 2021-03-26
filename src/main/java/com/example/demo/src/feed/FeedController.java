@@ -35,20 +35,20 @@ public class FeedController {
     }
 
     /**
-     * 게시물 등록 API
+     * 일반 숙소 게시물 등록 API
      * [POST] /feeds
      * @return BaseResponse<PostFeedRes>
      */
     // Path-variable
-    @ApiOperation(value = "게시물 생성 API")
+    @ApiOperation(value = "일반 숙소 게시물 생성 API")
     @ResponseBody
-    @PostMapping("/{feedId}") // (POST) http://52.79.187.77/feeds
+    @PostMapping("normal/{feedId}") // (POST) http://52.79.187.77/feeds
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
             @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
     })
-    public BaseResponse<PostFeedRes> postFeeds(@Valid @RequestBody PostFeedReq postFeedReq, BindingResult bindingResult){
+    public BaseResponse<PostFeedRes> postNormalFeeds(@Valid @RequestBody PostNormalFeedReq postNormalFeedReq, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
             return new BaseResponse<>(error);
@@ -57,7 +57,39 @@ public class FeedController {
         try {
             //jwt에서 idx 추출.
             userIdx = jwtService.getUserIdx();
-            PostFeedRes postFeedRes = feedService.postFeeds(userIdx, postFeedReq);
+            PostFeedRes postFeedRes = feedService.postNormalFeeds(userIdx, postNormalFeedReq);
+            return new BaseResponse<>(postFeedRes);
+        } catch(BaseException exception){
+            System.out.println(exception.getMessage());
+            return new BaseResponse<>((exception.getStatus()));
+
+        }
+
+    }
+    /**
+     * 에어비앤비 숙소 게시물 등록 API
+     * [POST] /feeds
+     * @return BaseResponse<PostFeedRes>
+     */
+    // Path-variable
+    @ApiOperation(value = "에어비앤비 숙소 게시물 생성 API")
+    @ResponseBody
+    @PostMapping("airbnb/{feedId}") // (POST) http://52.79.187.77/feeds
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+    })
+    public BaseResponse<PostFeedRes> postAirBnBFeeds(@Valid @RequestBody PostAirBnBFeedReq postAirBnBFeedReq, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
+            return new BaseResponse<>(error);
+        }
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+            PostFeedRes postFeedRes = feedService.postAirBnBFeeds(userIdx, postAirBnBFeedReq);
             return new BaseResponse<>(postFeedRes);
         } catch(BaseException exception){
             System.out.println(exception.getMessage());

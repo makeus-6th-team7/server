@@ -1,9 +1,7 @@
 package com.example.demo.src.feed;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.src.feed.model.PostCommentRes;
-import com.example.demo.src.feed.model.PostFeedReq;
-import com.example.demo.src.feed.model.PostFeedRes;
+import com.example.demo.src.feed.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +19,18 @@ public class FeedService {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public PostFeedRes postFeeds(int userIdx, PostFeedReq postFeedReq) throws BaseException {
+    public PostFeedRes postNormalFeeds(int userIdx, PostNormalFeedReq postNormalFeedReq) throws BaseException {
         try {
-            int feedId = feedDao.postFeeds(userIdx,postFeedReq);
+            int feedId = feedDao.postNormalFeeds(userIdx,postNormalFeedReq);
+            return new PostFeedRes(feedId);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public PostFeedRes postAirBnBFeeds(int userIdx, PostAirBnBFeedReq postAirBnBFeedReq) throws BaseException {
+        try {
+            int feedId = feedDao.postAirBnBFeeds(userIdx,postAirBnBFeedReq);
             return new PostFeedRes(feedId);
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
