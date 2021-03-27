@@ -66,6 +66,7 @@ public class FeedController {
         }
 
     }
+
     /**
      * 일반 숙소 게시물 등록 API
      * [POST] /feeds
@@ -123,6 +124,38 @@ public class FeedController {
             userIdx = jwtService.getUserIdx();
             PostFeedRes postFeedRes = feedService.postAirBnBFeeds(userIdx, postAirBnBFeedReq);
             return new BaseResponse<>(postFeedRes);
+        } catch(BaseException exception){
+            System.out.println(exception.getMessage());
+            return new BaseResponse<>((exception.getStatus()));
+
+        }
+
+    }
+    /**
+     * 검색어 추천 API
+     * [GET] /feeds/search/keyword-recom
+     * @return BaseResponse<GetSearchResultRes>
+     */
+    // Path-variable
+    @ApiOperation(value = "검색어 추천 API")
+    @ResponseBody
+    @PostMapping("/search/keyword-recom") // (Post) http://52.79.187.77/feeds/search/keyword-recom
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+    })
+    public BaseResponse<GetKeywordRecomRes> getSearchResults(@Valid @RequestBody GetKeywordRecomReq getKeywordRecomReq, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
+            return new BaseResponse<>(error);
+        }
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+            GetKeywordRecomRes getKeywordRecomRes = feedProvider.getKeywordRecoms(getKeywordRecomReq.getKeyword());
+            return new BaseResponse<>(getKeywordRecomRes);
         } catch(BaseException exception){
             System.out.println(exception.getMessage());
             return new BaseResponse<>((exception.getStatus()));

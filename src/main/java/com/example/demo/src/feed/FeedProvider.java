@@ -83,7 +83,17 @@ public class FeedProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
+    public GetKeywordRecomRes getKeywordRecoms(String keyword) throws BaseException {
+        try {
+            List<String> accomodationKeywords= feedDao.getAccomodationKeywordRecoms(keyword);
+            List<String> tagKeywords= feedDao.getTagKeywordRecoms(keyword);
+            GetKeywordRecomRes getKeywordRecomRes = new GetKeywordRecomRes(accomodationKeywords,tagKeywords);
+            return getKeywordRecomRes;
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     public GetSearchResultRes getSearchResults(String keyword) throws BaseException {
         try {
             GetSearchResultRes getSearchResultRes = feedDao.getSearchResults(keyword);

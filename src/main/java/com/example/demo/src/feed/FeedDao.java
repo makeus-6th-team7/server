@@ -90,6 +90,21 @@ public class FeedDao {
 
         return getHomeFeedRes;
     }
+    public List<String> getAccomodationKeywordRecoms(String keyword){
+        String getKeywordRecomsQeury = "select title\n" +
+                "from feed\n" +
+                "where isDeleted = 'N' and title like concat(\"%\",?,\"%\")\n" +
+                "group by title;";
+        return this.jdbcTemplate.queryForList(getKeywordRecomsQeury, String.class,  keyword);
+    }
+    public List<String> getTagKeywordRecoms(String keyword){
+        String getKeywordRecomsQeury = "select tag.name\n" +
+                "from tag join feed\n" +
+                "on tag.id = feed.id\n" +
+                "where feed.isDeleted = 'N' and name like concat(\"%\",?,\"%\")\n" +
+                "group by tag.name;";
+        return this.jdbcTemplate.queryForList(getKeywordRecomsQeury, String.class,  keyword);
+    }
     public GetHomeFeedRes getNewHomeFeeds(){
         String getNewHomeFeedsQuery = "select newFeed.id as feedId, title, feedImgUrl, retouchedDegree, temperature\n" +
                 "from\n" +
