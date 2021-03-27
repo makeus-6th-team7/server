@@ -60,6 +60,17 @@ public class FeedProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public GetSearchResultRes getSearchResults(String keyword) throws BaseException {
+        try {
+            GetSearchResultRes getSearchResultRes = feedDao.getSearchResults(keyword);
+            return getSearchResultRes;
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     /**
      * 게시글 숙소의 최저가 링크 반환하는 메소드
      * 네이버 쇼핑 API 사용

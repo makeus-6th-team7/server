@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -42,7 +43,7 @@ public class FeedController {
     // Path-variable
     @ApiOperation(value = "일반 숙소 게시물 생성 API")
     @ResponseBody
-    @PostMapping("normal/{feedId}") // (POST) http://52.79.187.77/feeds
+    @PostMapping("normal") // (POST) http://52.79.187.77/feeds
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -74,7 +75,7 @@ public class FeedController {
     // Path-variable
     @ApiOperation(value = "에어비앤비 숙소 게시물 생성 API")
     @ResponseBody
-    @PostMapping("airbnb/{feedId}") // (POST) http://52.79.187.77/feeds
+    @PostMapping("airbnb") // (POST) http://52.79.187.77/feeds
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
@@ -98,7 +99,38 @@ public class FeedController {
         }
 
     }
+    /**
+     * 검색결과 조회 API
+     * [GET] /feeds/search
+     * @return BaseResponse<GetSearchResultRes>
+     */
+    // Path-variable
+    @ApiOperation(value = "검색결과 조회 API")
+    @ResponseBody
+    @PostMapping("/search") // (Post) http://52.79.187.77/feeds/search
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+    })
+    public BaseResponse<GetSearchResultRes> getSearchResults(@Valid @RequestBody GetSearchResultReq getSearchResultReq, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
+            return new BaseResponse<>(error);
+        }
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+            GetSearchResultRes getSearchResultRes = feedProvider.getSearchResults(getSearchResultReq.getKeyword());
+            return new BaseResponse<>(getSearchResultRes);
+        } catch(BaseException exception){
+            System.out.println(exception.getMessage());
+            return new BaseResponse<>((exception.getStatus()));
 
+        }
+
+    }
 
     /**
      * 게시물 상세조회 API

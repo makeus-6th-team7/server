@@ -62,6 +62,37 @@ public class FeedDao {
                 int.class,
                 commentId);
     }
+    public GetSearchResultRes getSearchResults (String keyword){
+        String getSearchResultsQuery = "select resultFeed.id as feedId, feedImgUrl\n" +
+                "from\n" +
+                "    # 태그 검색 결과\n" +
+                "        ((select feed.id, feed.createdAt\n" +
+                "        from feed join feedTag\n" +
+                "        on feed.id = feedTag.feedId\n" +
+                "        join tag\n" +
+                "        on feedTag.tagId = tag.id\n" +
+                "        where tag.name = ?\n" +
+                "        group by feed.id)\n" +
+                "    union\n" +
+                "    # 숙소 검색 결과\n" +
+                "        (select feed.id, feed.createdAt\n" +
+                "        from feed join feedImg\n" +
+                "        on feed.id = feedImg.feedId\n" +
+                "        where feed.isDeleted = 'N' and feed.title like concat(\"%\",?,\"%\")\n" +
+                "        group by feed.id)\n" +
+                "    order by createdAt DESC) as resultFeed\n" +
+                "join feedImg\n" +
+                "on resultFeed.id = feedImg.feedId\n" +
+                "group by resultFeed.id;\n";
+        GetSearchResultRes getSearchResultRes;
+        GetSearchResultRes tmp = new GetSearchResultRes();
+        getSearchResultRes= new GetSearchResultRes(this.jdbcTemplate.query(getSearchResultsQuery,
+                (rs, rowNum) -> tmp.new SearchResult(
+                        rs.getInt("feedId"),
+                        rs.getString("feedImgUrl")), keyword,keyword));
+
+        return getSearchResultRes;
+    }
     public void updateViewTable(int userIdx, int feedId){
         // 자신의 피드를 조회했는지 체크 (자신의 피드조회시 업데이트 X)
         boolean checkMyFeed = false;
