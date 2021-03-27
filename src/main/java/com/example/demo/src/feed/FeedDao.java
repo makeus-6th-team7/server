@@ -62,6 +62,57 @@ public class FeedDao {
                 int.class,
                 commentId);
     }
+    public GetHomeFeedRes getPopHomeFeeds(){
+        String getPopHomeFeedsQuery = "select popularFeed.id as feedId, title, feedImgUrl,retouchedDegree,temperature\n" +
+                "from\n" +
+                "    (select feed.id, feed.userIdx, title, retouchedDegree, feedImgUrl,count(feedLike.feedId) as likeNum\n" +
+                "    from\n" +
+                "         (select feed.id, userIdx,isAirBnB, title, retouchedDegree, feedImgUrl\n" +
+                "            from feed join feedImg\n" +
+                "            on feed.id = feedImg.feedId\n" +
+                "            where feed.isDeleted = 'N'\n" +
+                "            group by feed.id) as feed\n" +
+                "    left outer join feedLike\n" +
+                "    on feed.id = feedLike.feedId and feedLike.isLiked = 'Y'\n" +
+                "    group by feed.id) as popularFeed\n" +
+                "left outer join user\n" +
+                "on popularFeed.userIdx = user.userIdx\n" +
+                "order by likeNum desc";
+        GetHomeFeedRes getHomeFeedRes;
+        GetHomeFeedRes tmp = new GetHomeFeedRes();
+        getHomeFeedRes= new GetHomeFeedRes(this.jdbcTemplate.query(getPopHomeFeedsQuery,
+                (rs, rowNum) -> tmp.new Feed(
+                        rs.getInt("feedId"),
+                        rs.getString("title"),
+                        rs.getString("feedImgUrl"),
+                        rs.getInt("retouchedDegree"),
+                        rs.getInt("temperature"))));
+
+        return getHomeFeedRes;
+    }
+    public GetHomeFeedRes getNewHomeFeeds(){
+        String getNewHomeFeedsQuery = "select newFeed.id as feedId, title, feedImgUrl, retouchedDegree, temperature\n" +
+                "from\n" +
+                "    (select feed.userIdx, feed.id, title, retouchedDegree, feedImgUrl, feed.createdAt\n" +
+                "    from feed join feedImg\n" +
+                "    on feed.id = feedImg.feedId\n" +
+                "    where feed.isDeleted = 'N') as newFeed\n" +
+                "join user\n" +
+                "on newFeed.userIdx = user.userIdx\n" +
+                "group by newFeed.id\n" +
+                "order by newFeed.createdAt DESC;";
+        GetHomeFeedRes getHomeFeedRes;
+        GetHomeFeedRes tmp = new GetHomeFeedRes();
+        getHomeFeedRes= new GetHomeFeedRes(this.jdbcTemplate.query(getNewHomeFeedsQuery,
+                (rs, rowNum) -> tmp.new Feed(
+                        rs.getInt("feedId"),
+                        rs.getString("title"),
+                        rs.getString("feedImgUrl"),
+                        rs.getInt("retouchedDegree"),
+                        rs.getInt("temperature"))));
+
+        return getHomeFeedRes;
+    }
     public GetSearchResultRes getSearchResults (String keyword){
         String getSearchResultsQuery = "select resultFeed.id as feedId, feedImgUrl\n" +
                 "from\n" +

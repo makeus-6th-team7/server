@@ -40,7 +40,7 @@ public enum BaseResponseStatus {
     INVALID_FEED_ID(false, 2020, "존재하지 않는 feedId입니다."),
     INVALID_COMMENT_ID(false, 2021, "존재하지 않는 commentId입니다."),
     INVALID_USER_REQ(false, 2022, "권한이 없는 유저의 요청입니다."),
-
+    HOME_FEED_TYPE_ERROR(false, 2030, "홈피드 요청시, type 값은 pop 혹은 new만 올 수 있습니다."),
 
 
     /**

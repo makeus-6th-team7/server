@@ -13,10 +13,6 @@ public class GetSearchResultRes {
 
     public GetSearchResultRes(){}
 
-//    public GetSearchResultRes(List<SearchResult> setSearchResults) {
-//        this.searchResults = setSearchResults;
-//    }
-
     @Data
     @AllArgsConstructor
     public class SearchResult{

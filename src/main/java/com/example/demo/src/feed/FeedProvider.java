@@ -41,6 +41,29 @@ public class FeedProvider {
         this.jwtService = jwtService;
     }
 
+    public GetHomeFeedRes getHomeFeeds(String type) throws BaseException {
+
+        GetHomeFeedRes getHomeFeedRes = null;
+        if(type.equals("pop")){
+            try {
+                getHomeFeedRes = feedDao.getPopHomeFeeds();
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+                throw new BaseException(DATABASE_ERROR);
+            }
+        }
+        else if (type.equals("new")){
+            try{
+                getHomeFeedRes = feedDao.getNewHomeFeeds();
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+                throw new BaseException(DATABASE_ERROR);
+            }
+        }
+            else throw new BaseException(HOME_FEED_TYPE_ERROR);
+            return getHomeFeedRes;
+    }
+
     public GetFeedRes getFeedDetail(int userIdx, int feedId) throws BaseException {
         if(feedDao.checkFeedId(feedId)==0) throw new BaseException(INVALID_FEED_ID);
         try {
