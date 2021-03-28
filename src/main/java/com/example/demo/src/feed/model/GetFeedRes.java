@@ -15,14 +15,20 @@ public class GetFeedRes {
     private String profileImgUrl;
     @ApiModelProperty(value = "피드를 게시한 유저의 온도")
     private int temperature;
+    @ApiModelProperty(value = "에어비앤비인지 표시(에어비앤비인 경우: true, 아닌 경우: false)")
+    private boolean checkAirBnB;
     @ApiModelProperty(value = "사진 보정 정도")
     private int retouchedDegree;
     @ApiModelProperty(value = "후기")
     private String review;
+    @ApiModelProperty(value = "사용 도구", example = "카메라어플 사용. 보정필터 사용. ")
+    private String photoTool;
     @ApiModelProperty(value = "숙소 이름")
     private String title;
     @ApiModelProperty(value = "숙소 위치", example = "서울특별시 송파구 올림픽로 240 롯데월드")
     private String address;
+    @ApiModelProperty(value = "근처", example = "홍대입구역")
+    private String additionalLocation;
     @ApiModelProperty(value = "숙소 가격")
     private int price;
     @ApiModelProperty(value = "기간", example = "2021.01.18 - 2021.01.20")
@@ -54,8 +60,8 @@ public class GetFeedRes {
     @ApiModelProperty(value = "태그 리스트", example = "[\"잠실호텔\", \"럭셔리\"]")
     private List<String> tags = null;
 
-    public GetFeedRes(int userIdx, String userId, String profileImgUrl, int temperature,
-                      int retouchedDegree, String review, String title, String address,
+    public GetFeedRes(int userIdx, String userId, String profileImgUrl, int temperature, boolean checkAirBnB,
+                      int retouchedDegree, String review, String photoTool, String title, String address, String additionalLocation,
                       int price, String period, int likeNum, boolean checkLike, String createdAt,
                       int viewNum, int savedNum, int commentNum, boolean checkReport, int feedImgNum,
                       List<String> pros, List<String> cons, List<String> feedImgUrls, List<String> tags) {
@@ -63,10 +69,13 @@ public class GetFeedRes {
         this.userId = userId;
         this.profileImgUrl = profileImgUrl;
         this.temperature = temperature;
+        this.checkAirBnB = checkAirBnB;
         this.retouchedDegree = retouchedDegree;
         this.review = review;
+        this.photoTool = photoTool;
         this.title = title;
         this.address = address;
+        this.additionalLocation = additionalLocation;
         this.price = price;
         this.period = period;
         this.likeNum = likeNum;

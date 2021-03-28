@@ -68,18 +68,31 @@ public class FeedProvider {
         if(feedDao.checkFeedId(feedId)==0) throw new BaseException(INVALID_FEED_ID);
         try {
             GetFeedFromDao getFeedFromDao = feedDao.getFeedDetail(userIdx,feedId);
-            KakaoAddressRes kakaoAddressRes = getAdressByCordinates(getFeedFromDao.getLongitude(),getFeedFromDao.getLatitude());
-            String address = kakaoAddressRes.getAddress();
+            String address;
+            boolean checkAirBnB = false;
+            // 일반 숙소 피드일 경우에 지도API 에서 위치 불러온다. (TO-DO 애초에 업로드 할 때 저장하도록 바꾸기)
+            if(getFeedFromDao.getCheckAirBnB().equals("N")){
+                KakaoAddressRes kakaoAddressRes = getAdressByCordinates(getFeedFromDao.getLongitude(),getFeedFromDao.getLatitude());
+                address = kakaoAddressRes.getAddress();
+                checkAirBnB = false;
+            }
+            // 에어비앤비 일 경우
+            else{
+                address = getFeedFromDao.getAddress();
+            }
+
             // To-do: GetFeedFromDao / GetFeedRes -> 변수들이 겹치므로 부모클래스 만들어서 상속받도록, 복사생성자??
             GetFeedRes getFeedRes = new GetFeedRes(getFeedFromDao.getUserIdx(), getFeedFromDao.getUserId(), getFeedFromDao.getProfileImgUrl(),
-                                                   getFeedFromDao.getTemperature(),getFeedFromDao.getRetouchedDegree(),getFeedFromDao.getReview(),
-                                                   getFeedFromDao.getTitle(),address, getFeedFromDao.getPrice(),getFeedFromDao.getPeriod(),
+                                                   getFeedFromDao.getTemperature(),checkAirBnB,getFeedFromDao.getRetouchedDegree(),getFeedFromDao.getReview(),
+                                                   getFeedFromDao.getPhotoTool(), getFeedFromDao.getTitle(),address, getFeedFromDao.getAdditionalLocation(),
+                                                   getFeedFromDao.getPrice(),getFeedFromDao.getPeriod(),
                                                    getFeedFromDao.getLikeNum(),getFeedFromDao.isCheckLike(),getFeedFromDao.getCreatedAt(),
                                                    getFeedFromDao.getViewNum(),getFeedFromDao.getSavedNum(),getFeedFromDao.getCommentNum(),
                                                    getFeedFromDao.isCheckReport(),getFeedFromDao.getFeedImgNum(),getFeedFromDao.getPros(),
                                                    getFeedFromDao.getCons(),getFeedFromDao.getFeedImgUrls(),getFeedFromDao.getTags());
             return getFeedRes;
         } catch (Exception exception) {
+            System.out.println(exception.getMessage());
             throw new BaseException(DATABASE_ERROR);
         }
     }

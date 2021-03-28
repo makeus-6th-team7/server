@@ -42,6 +42,6 @@ public class PostFeedReq {
     @Min(value = 0, message = "retouchedDegree에 0과 5사이 값을 입력해 주세요")
     @Max(value = 5, message = "retouchedDegree에 0과 5사이 값을 입력해 주세요")
     private int retouchedDegree ;
-    @ApiModelProperty(value = "사용 도구",example = "기본카메라")
-    private String photoTool;
+    @ApiModelProperty(value = "사용 도구",example = "[ \"카메라어플\", \"보정필터\"]")
+    private List<String> photoTools;
 }

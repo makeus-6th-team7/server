@@ -183,7 +183,7 @@ public class FeedDao {
         String getFeedDetailQuery = "" +
                 "select *\n" +
                 "from\n" +
-                "    (select user.userIdx, userId, profileImgUrl, temperature, retouchedDegree, review, title, longitude, latitude, price,\n" +
+                "    (select user.userIdx, userId, profileImgUrl, temperature, retouchedDegree, review,photoTool, title, longitude, latitude, address, additionalLocation, price,isAirBnB,\n" +
                 "            CONCAT(DATE_FORMAT(startPeriod, '%Y.%m.%d'),\" - \",DATE_FORMAT(endPeriod, '%Y.%m.%d')) as period,\n" +
                 "            CASE\n" +
                 "                WHEN TIMESTAMPDIFF(minute,feed.createdAt,now()) < 60\n" +
@@ -230,13 +230,13 @@ public class FeedDao {
                 "    (select exists(select report.userIdx\n" +
                 "    from report join user\n" +
                 "    on report.userIdx = user.userIdx\n" +
-                "    where report.isReported = 'Y' and user.userIdx = ?) as isReported) as isReported #접속중인 사용자 idx\n" +
+                "    where report.isReported = 'Y' and user.userIdx = ? and report.feedId = ?) as isReported) as isReported #접속중인 사용자 idx\n" +
                 "join\n" +
                 "    (select count(feed.id) as feedImgNum\n" +
                 "    from feed join feedImg\n" +
                 "    on feed.id = feedImg.feedId\n" +
                 "    where feed.isDeleted = 'N' and feedImg.isDeleted = 'N' and feed.id = ? ) as feedImgNum;";
-        Object[] getFeedDetailParams = new Object[]{feedId,feedId,userIdx,feedId,feedId,feedId,userIdx,feedId};
+        Object[] getFeedDetailParams = new Object[]{feedId,feedId,userIdx,feedId,feedId,feedId,userIdx,feedId,feedId};
         getFeedFromDao = this.jdbcTemplate.queryForObject(getFeedDetailQuery,
                 (rs, rowNum) -> new GetFeedFromDao(
                         rs.getInt("userIdx"),
@@ -245,10 +245,14 @@ public class FeedDao {
                         rs.getInt("temperature"),
                         rs.getInt("retouchedDegree"),
                         rs.getString("review"),
+                        rs.getString("photoTool"),
                         rs.getString("title"),
                         rs.getDouble("longitude"),
                         rs.getDouble("latitude"),
+                        rs.getString("address"),
+                        rs.getString("additionalLocation"),
                         rs.getInt("price"),
+                        rs.getString("isAirBnB"), //이름 달라도 되나??
                         rs.getString("period"),
                         rs.getInt("likeNum"),
                         rs.getBoolean("isLiked"),
@@ -413,10 +417,14 @@ public class FeedDao {
                 "                  longitude,price,startPeriod,endPeriod, review, photoTool)\n" +
                 "            value(?,?,?,?,?,?,?,?,?,?);";
 
+        String photoToolDescription = "";
+        for(val photoTool : postNormalFeedReq.getPhotoTools()){
+            photoToolDescription += photoTool +" 사용. ";
+        }
         Object[] createFeedParams = new Object[]{userIdx, postNormalFeedReq.getTitle(), postNormalFeedReq.getRetouchedDegree(),
                                                 postNormalFeedReq.getLatitude(), postNormalFeedReq.getLongitude(),
                                                 postNormalFeedReq.getPrice(), postNormalFeedReq.getStartPeriod(),
-                                                postNormalFeedReq.getEndPeriod(), postNormalFeedReq.getReview(),postNormalFeedReq.getPhotoTool()};
+                                                postNormalFeedReq.getEndPeriod(), postNormalFeedReq.getReview(),photoToolDescription};
         this.jdbcTemplate.update(postFeedQury,createFeedParams);
         // 업로드한 게시물 feedId가져오기
         String lastInsertIdQuery = " SELECT MAX(id) FROM feed;";
@@ -444,15 +452,18 @@ public class FeedDao {
     @Transactional
     public int postAirBnBFeeds(int userIdx, PostAirBnBFeedReq postAirBnBFeedReq){
         // 게시물 업로드
-        String postFeedQury = "insert into feed (userIdx,isAirBnB,retouchedDegree, \n" +
+        String postFeedQury = "insert into feed (userIdx,isAirBnB, title, retouchedDegree, \n" +
                 "                 price,startPeriod,endPeriod,address, review,airBnBLink,additionalLocation, photoTool)\n" +
-                "            value(?,?,?,?,?,?,?,?,?,?,?);";
-
-        Object[] createFeedParams = new Object[]{userIdx, "Y" ,postAirBnBFeedReq.getRetouchedDegree(),
+                "            value(?,?,?,?,?,?,?,?,?,?,?,?);";
+        String photoToolDescription = "";
+        for(val photoTool : postAirBnBFeedReq.getPhotoTools()){
+            photoToolDescription += photoTool +" 사용. ";
+        }
+        Object[] createFeedParams = new Object[]{userIdx, "Y" ,"에어비앤비",postAirBnBFeedReq.getRetouchedDegree(),
                                                 postAirBnBFeedReq.getPrice(), postAirBnBFeedReq.getStartPeriod(),
                                                 postAirBnBFeedReq.getEndPeriod(), postAirBnBFeedReq.getAddress(),
                                                 postAirBnBFeedReq.getReview(), postAirBnBFeedReq.getAirBnBLink(),
-                                                postAirBnBFeedReq.getAdditionalLocation(), postAirBnBFeedReq.getPhotoTool()};
+                                                postAirBnBFeedReq.getAdditionalLocation(), photoToolDescription};
         this.jdbcTemplate.update(postFeedQury,createFeedParams);
         // 업로드한 게시물 feedId가져오기
         String lastInsertIdQuery = " SELECT MAX(id) FROM feed;";
