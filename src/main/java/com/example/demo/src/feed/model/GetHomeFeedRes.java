@@ -1,6 +1,5 @@
 package com.example.demo.src.feed.model;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,21 +8,50 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class GetHomeFeedRes {
-    private List<Feed> feeds;
+    List<Banner> banners;
+    List<SeoulTop5Feed> seoulTop5Feeds;
+    List<RisingFeed> risingFeeds;
+    List<MostLikedFeed> mostLikedFeeds;
+    List<MostReliableFeed> mostReliableFeeds;
+
     @Data
     @AllArgsConstructor
-    public class Feed{
-        @ApiModelProperty(value="피드 식별자",example = "1")
+    public class Banner{
         private int feedId;
-        @ApiModelProperty(value="피드 제목(상호명)",example = "롯데 호텔 월드")
         private String title;
-        @ApiModelProperty(value="피드 대표 사진 url")
-        private String feedImgUrl;
-        @ApiModelProperty(value="보정정도",example = "5")
-        private int retouchedDegree;
-        @ApiModelProperty(value="신뢰도",example = "50")
-        private int temperature;
+        private String imgUrl;
     }
+    @Data
+    @AllArgsConstructor
+    public class SeoulTop5Feed{
+        private int feedId;
+        private String title;
+        private String imgUrl;
+    }
+    @Data
+    @AllArgsConstructor
+    private class RisingFeed{
+        private int feedId;
+        private String title;
+        private String imgUrl;
+    }
+    @Data
+    @AllArgsConstructor
+    private class MostLikedFeed{
+        private int feedId;
+        private String title;
+        private String imgUrl;
+    }
+    @Data
+    @AllArgsConstructor
+    private class MostReliableFeed{
+        private int feedId;
+        private String title;
+        private String imgUrl;
+        private List<String> tags;
+    }
+
+    //나중에 지우기
 
     public GetHomeFeedRes() {
     }

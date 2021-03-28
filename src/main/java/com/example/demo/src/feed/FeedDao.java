@@ -10,8 +10,6 @@ import com.example.demo.src.feed.model.*;
 
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -62,7 +60,12 @@ public class FeedDao {
                 int.class,
                 commentId);
     }
-    public GetHomeFeedRes getPopHomeFeeds(){
+    //TO-DO
+    public GetHomeFeedRes getHomeFeeds(){
+        GetHomeFeedRes getHomeFeedRes = new GetHomeFeedRes();
+        return getHomeFeedRes;
+    }
+    public GetHomeTabFeedRes getPopHomeFeeds(){
         String getPopHomeFeedsQuery = "select popularFeed.id as feedId, title, feedImgUrl,retouchedDegree,temperature\n" +
                 "from\n" +
                 "    (select feed.id, feed.userIdx, title, retouchedDegree, feedImgUrl,count(feedLike.feedId) as likeNum\n" +
@@ -78,9 +81,9 @@ public class FeedDao {
                 "left outer join user\n" +
                 "on popularFeed.userIdx = user.userIdx\n" +
                 "order by likeNum desc";
-        GetHomeFeedRes getHomeFeedRes;
-        GetHomeFeedRes tmp = new GetHomeFeedRes();
-        getHomeFeedRes= new GetHomeFeedRes(this.jdbcTemplate.query(getPopHomeFeedsQuery,
+        GetHomeTabFeedRes getHomeFeedRes;
+        GetHomeTabFeedRes tmp = new GetHomeTabFeedRes();
+        getHomeFeedRes= new GetHomeTabFeedRes(this.jdbcTemplate.query(getPopHomeFeedsQuery,
                 (rs, rowNum) -> tmp.new Feed(
                         rs.getInt("feedId"),
                         rs.getString("title"),
@@ -105,7 +108,7 @@ public class FeedDao {
                 "group by tag.name;";
         return this.jdbcTemplate.queryForList(getKeywordRecomsQeury, String.class,  keyword);
     }
-    public GetHomeFeedRes getNewHomeFeeds(){
+    public GetHomeTabFeedRes getNewHomeFeeds(){
         String getNewHomeFeedsQuery = "select newFeed.id as feedId, title, feedImgUrl, retouchedDegree, temperature\n" +
                 "from\n" +
                 "    (select feed.userIdx, feed.id, title, retouchedDegree, feedImgUrl, feed.createdAt\n" +
@@ -116,9 +119,9 @@ public class FeedDao {
                 "on newFeed.userIdx = user.userIdx\n" +
                 "group by newFeed.id\n" +
                 "order by newFeed.createdAt DESC;";
-        GetHomeFeedRes getHomeFeedRes;
-        GetHomeFeedRes tmp = new GetHomeFeedRes();
-        getHomeFeedRes= new GetHomeFeedRes(this.jdbcTemplate.query(getNewHomeFeedsQuery,
+        GetHomeTabFeedRes getHomeFeedRes;
+        GetHomeTabFeedRes tmp = new GetHomeTabFeedRes();
+        getHomeFeedRes= new GetHomeTabFeedRes(this.jdbcTemplate.query(getNewHomeFeedsQuery,
                 (rs, rowNum) -> tmp.new Feed(
                         rs.getInt("feedId"),
                         rs.getString("title"),

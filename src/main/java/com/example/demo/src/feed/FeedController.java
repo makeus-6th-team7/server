@@ -14,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 
 @RestController
@@ -33,6 +32,7 @@ public class FeedController {
         this.feedProvider = feedProvider;
         this.feedService = feedService;
         this.jwtService = jwtService;
+
     }
     /**
      * 홈화면 조회 API
@@ -40,15 +40,15 @@ public class FeedController {
      * @return BaseResponse<GetHomeFeedRes>
      */
     // Path-variable
-    @ApiOperation(value = "홈화면 조회 API")
+    @ApiOperation(value = "홈화면 조회 API ")
     @ResponseBody
-    @PostMapping("/home") // (Post) http://52.79.187.77/feeds/search
+    @PostMapping("/home") // (Post) http://52.79.187.77/home
     @ApiResponses({
             @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
             @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
     })
-    public BaseResponse<GetHomeFeedRes> getHomeFeeds(@Valid @RequestBody GetHomeFeedReq getHomeFeedReq, BindingResult bindingResult){
+    public BaseResponse<GetHomeFeedRes> getHomeTabFeeds(BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
             return new BaseResponse<>(error);
@@ -57,7 +57,38 @@ public class FeedController {
         try {
             //jwt에서 idx 추출.
             userIdx = jwtService.getUserIdx();
-            GetHomeFeedRes getHomeFeedRes = feedProvider.getHomeFeeds(getHomeFeedReq.getType());
+            GetHomeFeedRes getHomeFeedRes = feedProvider.getHomeFeeds();
+            return new BaseResponse<>(getHomeFeedRes);
+        } catch(BaseException exception){
+            System.out.println(exception.getMessage());
+            return new BaseResponse<>((exception.getStatus()));
+
+        }
+    }
+    /**
+     * 홈화면(인기/최신) 조회 API
+     * [POST] /feeds/home/tab
+     * @return BaseResponse<GetHomeFeedRes>
+     */
+    // Path-variable
+    @ApiOperation(value = "홈화면(인기/최신) 조회 API ")
+    @ResponseBody
+    @PostMapping("/home/tab") // (Post) http://52.79.187.77/home/tab
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청에 성공하였습니다.",response = BaseResponse.class ),
+            @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
+            @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
+    })
+    public BaseResponse<GetHomeTabFeedRes> getHomeTabFeeds(@Valid @RequestBody GetHomeTabFeedReq getHomeFeedReq, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
+            return new BaseResponse<>(error);
+        }
+        int userIdx = 0;
+        try {
+            //jwt에서 idx 추출.
+            userIdx = jwtService.getUserIdx();
+            GetHomeTabFeedRes getHomeFeedRes = feedProvider.getHomeTabFeeds(getHomeFeedReq.getType());
             return new BaseResponse<>(getHomeFeedRes);
         } catch(BaseException exception){
             System.out.println(exception.getMessage());

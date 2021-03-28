@@ -4,8 +4,8 @@ package com.example.demo.src.feed.model;
         import lombok.Data;
 
 @Data
-public class GetHomeFeedReq {
-    public GetHomeFeedReq(){
+public class GetHomeTabFeedReq {
+    public GetHomeTabFeedReq(){
         super();
     }
     @ApiModelProperty(value="pop:인기, new:최신",example = "pop")
