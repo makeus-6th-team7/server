@@ -48,11 +48,7 @@ public class FeedController {
             @ApiResponse(code = 2001, message = "JWT를 입력해주세요.",response = BaseResponse.class),
             @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다.",response = BaseResponse.class),
     })
-    public BaseResponse<GetHomeFeedRes> getHomeTabFeeds(BindingResult bindingResult){
-        if (bindingResult.hasErrors()) {
-            ResponseEntity<String> error = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
-            return new BaseResponse<>(error);
-        }
+    public BaseResponse<GetHomeFeedRes> getHomeTabFeeds(){
         int userIdx = 0;
         try {
             //jwt에서 idx 추출.

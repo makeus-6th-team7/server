@@ -63,6 +63,103 @@ public class FeedDao {
     //TO-DO
     public GetHomeFeedRes getHomeFeeds(){
         GetHomeFeedRes getHomeFeedRes = new GetHomeFeedRes();
+        // 오래된 날짜 순
+        String getBannerQuery = "select feed.id as feedId , title, feedImgUrl\n" +
+                "from feed join feedImg\n" +
+                "on feed.id = feedImg.feedId\n" +
+                "where feed.isDeleted = 'N'\n" +
+                "group by feed.id\n" +
+                "order by feed.createdAt\n" +
+                "limit 5;";
+        // 임의 지정
+        String getSeoulTop5FeedQuery = "" +
+                "select feed.id as feedId, title, feedImgUrl\n" +
+                "from feed\n" +
+                "         join feedImg\n" +
+                "              on feed.id = feedImg.feedId\n" +
+                "where feed.isDeleted = 'N' and (feed.id = 66 or feed.id = 65 or feed.id = 63 or feed.id = 1 or feed.id =68)\n" +
+                "group by feed.id\n" +
+                "order by feed.id desc;";
+        // 임의 지정
+        String getRisingFeedQuery = "select feed.id as feedId , title, feedImgUrl\n" +
+                "from feed join feedImg\n" +
+                "on feed.id = feedImg.feedId\n" +
+                "where feed.isDeleted = 'N'\n" +
+                "group by feed.id\n" +
+                "order by feed.createdAt\n" +
+                "limit 3,5;";
+        String getMostLikedFeedQuery = "select popularFeed.id as feedId, title, feedImgUrl\n" +
+                "from\n" +
+                "    (select feed.id, feed.userIdx, title, retouchedDegree, feedImgUrl,count(feedLike.feedId) as likeNum\n" +
+                "    from\n" +
+                "         (select feed.id, userIdx,isAirBnB, title, retouchedDegree, feedImgUrl\n" +
+                "            from feed join feedImg\n" +
+                "            on feed.id = feedImg.feedId\n" +
+                "            where feed.isDeleted = 'N'\n" +
+                "            group by feed.id) as feed\n" +
+                "    left outer join feedLike\n" +
+                "    on feed.id = feedLike.feedId and feedLike.isLiked = 'Y'\n" +
+                "    group by feed.id) as popularFeed\n" +
+                "left outer join user\n" +
+                "on popularFeed.userIdx = user.userIdx\n" +
+                "order by likeNum desc\n" +
+                "limit 5;\n;";
+        // TO-DO: 한 사람의 게시물만 가져올 수 있으니 조정 필요
+        //신뢰도 높은거 가져오기
+        String getMostReliableFeedQuery = "select feedId,title, feedImgUrl\n" +
+                "from\n" +
+                "    (select feed.id as feedId,userIdx, title, feedImgUrl\n" +
+                "     from feed\n" +
+                "     join feedImg\n" +
+                "     on feed.id = feedImg.feedId\n" +
+                "     where feed.isDeleted = 'N'\n" +
+                "     group by feed.id\n" +
+                "    ) as feed\n" +
+                "join user\n" +
+                "on user.userIdx = feed.userIdx\n" +
+                "order by temperature desc\n" +
+                "limit 5;";
+        String getTagsByFeedIdQuery = "select tag.name\n" +
+                "from feed join feedTag\n" +
+                "on feed.id = feedTag.feedId\n" +
+                "join tag\n" +
+                "on feedTag.tagId = tag.id\n" +
+                "where feed.isDeleted = 'N' and feedTag.isDeleted = 'N' and feed.id = ?";
+        GetHomeFeedRes tmp = new GetHomeFeedRes();
+        getHomeFeedRes.setBanners(this.jdbcTemplate.query(getBannerQuery,
+                (rs, rowNum) -> tmp.new Banner(
+                        rs.getInt("feedId"),
+                        rs.getString("title"),
+                        rs.getString("feedImgUrl")
+                )  ));
+        getHomeFeedRes.setSeoulTop5Feeds(this.jdbcTemplate.query(getSeoulTop5FeedQuery,
+                (rs, rowNum) -> tmp.new SeoulTop5Feed(
+                        rs.getInt("feedId"),
+                        rs.getString("title"),
+                        rs.getString("feedImgUrl")
+                )  ));
+        getHomeFeedRes.setRisingFeeds(this.jdbcTemplate.query(getRisingFeedQuery,
+                (rs, rowNum) -> tmp.new RisingFeed(
+                        rs.getInt("feedId"),
+                        rs.getString("title"),
+                        rs.getString("feedImgUrl")
+                )  ));
+        getHomeFeedRes.setMostLikedFeeds(this.jdbcTemplate.query(getMostLikedFeedQuery,
+                (rs, rowNum) -> tmp.new MostLikedFeed(
+                        rs.getInt("feedId"),
+                        rs.getString("title"),
+                        rs.getString("feedImgUrl")
+                )  ));
+        getHomeFeedRes.setMostReliableFeeds(this.jdbcTemplate.query(getMostReliableFeedQuery,
+                (rs, rowNum) -> tmp.new MostReliableFeed(
+                        rs.getInt("feedId"),
+                        rs.getString("title"),
+                        rs.getString("feedImgUrl")
+                )  ));
+        // set tag to mostReliableFeed.
+        for (val mostReliableFeed : getHomeFeedRes.getMostReliableFeeds()){
+            mostReliableFeed.setTags(this.jdbcTemplate.queryForList(getTagsByFeedIdQuery,String.class,mostReliableFeed.getFeedId()));
+        }
         return getHomeFeedRes;
     }
     public GetHomeTabFeedRes getPopHomeFeeds(){

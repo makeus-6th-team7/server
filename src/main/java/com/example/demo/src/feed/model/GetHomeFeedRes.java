@@ -30,29 +30,34 @@ public class GetHomeFeedRes {
     }
     @Data
     @AllArgsConstructor
-    private class RisingFeed{
+    public class RisingFeed{
         private int feedId;
         private String title;
         private String imgUrl;
     }
     @Data
     @AllArgsConstructor
-    private class MostLikedFeed{
+    public class MostLikedFeed{
         private int feedId;
         private String title;
         private String imgUrl;
     }
     @Data
     @AllArgsConstructor
-    private class MostReliableFeed{
+    public class MostReliableFeed{
         private int feedId;
         private String title;
         private String imgUrl;
         private List<String> tags;
-    }
 
-    //나중에 지우기
+        public MostReliableFeed(int feedId, String title, String imgUrl) {
+            this.feedId = feedId;
+            this.title = title;
+            this.imgUrl = imgUrl;
+        }
+    }
 
     public GetHomeFeedRes() {
     }
+
 }
