@@ -21,7 +21,9 @@ public class UserDao {
 
     public int createUser(KakaoProfileRes kakaoProfile){
         String createUserQuery = "insert into user (kakaoId, userId, profileImgUrl,email) VALUES (?,?,?,?)";
-        Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.getProperties().getProfile_image(), kakaoProfile.getKakao_account().getEmail()};
+//        Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.getProperties().getProfile_image(), kakaoProfile.getKakao_account().getEmail()};
+        Object[] createUserParams = new Object[]{kakaoProfile.getId(),kakaoProfile.getId(), kakaoProfile.getProperties().getProfile_image(), ""};
+
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
         String lastInsertIdQuery = "SELECT MAX(userIdx) FROM user";

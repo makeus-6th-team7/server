@@ -18,19 +18,22 @@ public class KakaoProfileRes {
 
     @Data
     public class KakaoAccount {
+
         private Boolean profile_needs_agreement;
         private Profile profile;
         private Boolean has_email;
         private Boolean email_needs_agreement;
-        private Boolean is_email_valid;
-        private Boolean is_email_verified;
-        private String email;
+        // 토큰-> 정보 받아올 때 오류 생겨서 없앰
+//        private Boolean is_email_valid = false;
+//        private Boolean is_email_verified = false;
+//        private String email = "";
 
         @Data
         public class Profile {
             private String nickname;
             private String thumbnail_image_url;
             private String profile_image_url;
+            private Boolean is_default_image;
         }
     }
 }

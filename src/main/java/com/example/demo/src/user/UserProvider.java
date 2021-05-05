@@ -37,6 +37,7 @@ public class UserProvider {
 
     public KakaoProfileRes getKakaoProfile(PostLoginReq postLoginReq) throws BaseException{
         try{
+            System.out.println("1");
             RestTemplate rt = new RestTemplate();
             //HttpHeader 오브젝트 생성
             HttpHeaders headers = new HttpHeaders();
@@ -53,8 +54,11 @@ public class UserProvider {
                     kakaoProfileRequest,
                     String.class
             );
+            System.out.println("2");
+            System.out.println(response.getBody());
             ObjectMapper objectMapper = new ObjectMapper();
             KakaoProfileRes kakaoProfile = objectMapper.readValue(response.getBody(), KakaoProfileRes.class);
+            System.out.println("3");
             return kakaoProfile;
         }
         catch (Exception exception) {
