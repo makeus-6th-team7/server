@@ -4,6 +4,9 @@
 ## API documentation
 http://52.79.187.77/swagger-ui.html# 
 
+## 어플 소개
+https://www.notion.so/miorispace/MAKE-US-6th-team7-c76347bb09044cbfb830363ea6c3306b
+
 ## Tech stack
 ### Server
 - OS : ubuntu18.04
